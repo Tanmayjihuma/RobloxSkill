@@ -1,77 +1,67 @@
---- this is just an example generally we save player data in 2 things first is attributes , second is from leaderstate 
---- and sometime we need to calculate multiplayer by vip and other gamepassed so its depends  
+--- This service provides generic functions to update player data,
+--- dynamically applying multipliers based on attributes.
+
 local StatesService = {}
 
-StatesService.UpdateCash = function(player, amount , reset ,isRbxReward)
+StatesService.Update_Stats_FROM_ATTRUBUTE = function(player, amount, reset, isRbxReward, initMultiplayer, statName)
 	if not player or not amount or not player.Parent then return end
-	local Cash = player:GetAttribute("Cash")
-	if Cash then
+	
+	-- We rename the parameter to `statName` to avoid confusing it with the actual numerical value.
+	local currentStatValue = player:GetAttribute(statName)
+	
+	if currentStatValue ~= nil then
+		amount *= (initMultiplayer or 1) -- Safeguard in case initMultiplayer is nil
+		
 		if amount > 0 and not isRbxReward then
-			local multiplier = 0
-			if player:GetAttribute("DoubleCash") then multiplier += 2 end
-			if player:GetAttribute("10xCash") then multiplier += 10 end
-			if player:GetAttribute("VIP") then multiplier += 2 end
-
-			if multiplier == 0 then multiplier = 1 end
-
+			-- Correct Multiplier Logic: Initialize to 1 FIRST.
+			local multiplier = 1
+			
+			-- Dynamically check for a "Double" attribute.
+			-- E.g., if statName is "Cash", it looks for attribute "DoubleCash"
+			if player:GetAttribute("Double" .. statName) then 
+				multiplier *= 2 
+			end
+			
 			amount *= multiplier
 		end
 
 		if reset then
-			player:SetAttribute("Cash", 0)
+			player:SetAttribute(statName, 0)
 		else
-			player:SetAttribute("Cash", math.max(0, Cash + amount))
+			player:SetAttribute(statName, math.max(0, currentStatValue + amount))
 		end
 	end
-
 end
 
-StatesService.UpdateSteak = function(player, amount, reset , isRbxReward)
+StatesService.Update_Stats_FROM_LeaderStats = function(player, amount, reset, isRbxReward, initMultiplayer, statName)
 	if not player or not amount or not player.Parent then return end
+	
 	local leaderstats = player:FindFirstChild("leaderstats")
 	if leaderstats then
-		local streak = leaderstats:FindFirstChild("Streak")
-		if amount > 0 and not isRbxReward then
-			local multiplier = 0
-			if player:GetAttribute("DoubleStreak") then multiplier += 2 end
-			if multiplier == 0 then multiplier = 1 end
-			amount *= multiplier
-		end
-		if reset then
-			streak.Value = 0
-		else
-			streak.Value = math.max(0, streak.Value + amount)
-		end
-	end
-end
-
-StatesService.UpdateWin = function(player, amount, reset , isRbxReward)
-	if not player or not amount or not player.Parent then return end
-	local leaderstats = player:FindFirstChild("leaderstats")
-	if leaderstats then
-		local win = leaderstats:FindFirstChild("Wins")
-		if not win then return end
-		if amount > 0 and not isRbxReward then
-			local multiplier = 0
-			if player:GetAttribute("DoubleWins") then multiplier += 2 end
-			if player:GetAttribute("10xWins") then multiplier += 10 end
-
-			if multiplier == 0 then multiplier = 1 end
-
-			amount *= multiplier
-		end
-
-		if reset then
-			win.Value = 0
-		else
-			win.Value = math.max(0, win.Value + amount)
+		-- Find the IntValue/NumberValue object inside leaderstats
+		local statObject = leaderstats:FindFirstChild(statName)
+		
+		if statObject then
+			amount *= (initMultiplayer or 1)
+			
+			if amount > 0 and not isRbxReward then
+				local multiplier = 1
+				
+				if player:GetAttribute("Double" .. statName) then 
+					multiplier *= 2 
+				end
+				
+				amount *= multiplier
+			end
+			
+			if reset then
+				statObject.Value = 0
+			else
+				-- Fixed the 'streak.Value' typo here
+				statObject.Value = math.max(0, statObject.Value + amount)
+			end
 		end
 	end
 end
-
--- or add a function to update the table 
-
 
 return StatesService
-
-
