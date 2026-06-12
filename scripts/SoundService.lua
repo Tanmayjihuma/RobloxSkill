@@ -1,4 +1,4 @@
--- SoundManager.lua - Comprehensive audio management system
+-- this is just for example 
 local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -488,3 +488,61 @@ function SoundManager:Play3DSound(soundId, position, config)
 end
 
 return SoundManager
+
+
+-- example of music service 
+--[[
+
+local MusicService = {}
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remote = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Remotes"):WaitForChild("MusicRemote")
+local SoundService = game:GetService("SoundService")
+
+local function playNextSong()
+	local ServerStorage = game:GetService("ServerStorage")
+	local MusicFolder = ServerStorage:WaitForChild("GameMusic") 
+	local songs = MusicFolder:GetChildren()
+	if #songs == 0 then return end
+
+	local selectedSong = songs[math.random(1, #songs)]
+	
+	if not selectedSong.IsLoaded then
+		selectedSong.Loaded:Wait()
+	end
+	
+	Remote:FireAllClients(selectedSong.SoundId)
+
+	task.wait(selectedSong.TimeLength + 2)
+	playNextSong()
+end
+
+function MusicService._Init()
+	task.spawn(playNextSong)
+end
+
+function MusicService._init()
+	local currentSound = nil
+
+	Remote.OnClientEvent:Connect(function(soundId)
+		if not currentSound then
+			currentSound = Instance.new("Sound")
+			currentSound.Name = "LocalGameMusic"
+			currentSound.Parent = SoundService
+		end
+		
+		currentSound:Stop()
+		currentSound.SoundId = soundId
+		currentSound:Play()
+
+		print("Now playing: " .. soundId)
+	end)
+end
+
+return MusicService
+
+]]
+
+
+
+
+
