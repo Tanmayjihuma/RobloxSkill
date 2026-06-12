@@ -1,4 +1,4 @@
--- this is just an example how AutoDataSavingService works variable names can be different 
+
 -- also we store data in 2 format after loading , attributes and this system here is allready perfect
 -- second is leaderboard this is also kinda perfect
 
