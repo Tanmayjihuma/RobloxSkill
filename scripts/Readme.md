@@ -12,11 +12,11 @@ Before diving into individual scripts, it is crucial to understand how data move
 We solve this by feeding defaults from `ReplicatedStorage.Config.DefaultData` and splitting our data into three distinct extraction types:
 
 ### 1. Attribute Data (Standard Stats)
-We load a table of standard stats (like levels, experience, or standard flags) and immediately assign them as Attributes on the player. Because our `AutoDataSavingService` dynamically reads the `DefaultData` config, any attribute listed there is automatically extracted from the player and safely saved. This ensures data is never lost.
+We load a table of standard stats (like TutorialCompleted, GetStarterCash ,DailyPlaytimeMinutes ,or standard flags) and immediately assign them as Attributes on the player. Because our `AutoDataSavingService` dynamically reads the `DefaultData` config, any attribute listed there is automatically extracted from the player and safely saved. This ensures data is never lost.
 
 ### 2. Items Data (String-Based Arrays)
 Because **Roblox Attributes cannot store tables**, we store player inventories and owned items as comma-separated strings (e.g., `"item1,item2,item3"`). This data is loaded from its own specific DataStore name, separate from standard attributes, and saved by manually packaging the strings back into a table in the saving service.
-*Generic Example of safely granting an item:*
+*EX --> FOR FIND or FIND AND UPDATE*
 ```lua
 local owned = player:GetAttribute("MyOwnedItems")
 if not owned then return end -- Prevent data loss if data hasn't loaded yet!
@@ -27,8 +27,9 @@ if not string.find(owned, "NewItemName") then
 end
 ```
 
+
 ### 3. Leaderstat Data (Ordered Data)
-Data that needs to be displayed on a Global Leaderboard (like Wins or Highest Streak) cannot be stored in a normal table. It must be saved as standalone numbers using `OrdinaryDataService` (a wrapper for `OrderedDataStore`). These numbers are loaded and assigned directly to the `ValueBase` objects inside the player's `leaderstats` folder.
+Data that needs to be displayed on a Global Leaderboard (like Wins or Highest Streak, Cash) cannot be stored in a normal table. It must be saved as standalone numbers using `OrdinaryDataService` (a wrapper for `OrderedDataStore`). These numbers are loaded and assigned directly to the `ValueBase` objects inside the player's `leaderstats` folder.
 
 ### The Lifecycle Control (ServerInit Process)
 1. **Initialization:** `ServerInit` loads all 3 data types from the DataStores.
