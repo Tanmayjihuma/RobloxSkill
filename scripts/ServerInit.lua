@@ -84,7 +84,7 @@ end)
 -- 9. On Player Added
 -- ==========================================
 Players.PlayerAdded:Connect(function(player)
-	-- 10. Player init (Loading data)
+	-- 10. Player init (Loading data , seting item data , assing base and leaderstate if any)
 	local AttributeData =
 		DataService.loadPlayerData("PlayerAttributeData", 5, true, player, DefaultData.Attributes, true)
 	local ItemsData =
