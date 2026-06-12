@@ -1,5 +1,5 @@
---- this is just an example generally we save player data in 3 things first is attributes , second is from leaderstate and third is table or global table 
---- and sometime we need to calculate multiplayer by vip and other gamepassed so its depends 
+--- this is just an example generally we save player data in 2 things first is attributes , second is from leaderstate 
+--- and sometime we need to calculate multiplayer by vip and other gamepassed so its depends  
 local StatesService = {}
 
 StatesService.UpdateCash = function(player, amount , reset ,isRbxReward)
