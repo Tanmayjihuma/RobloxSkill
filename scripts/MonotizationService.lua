@@ -48,7 +48,6 @@ local productHandlers = {
 -- ==========================================
 local function tryUserOwnsGamePassAsync(retry, player)
 	for _, passId in pairs(PASS_IDS) do
-		task.spawn(function()
 			for attempt = 1, retry do
 				if not player or not player.Parent then return end
 				local success, owns = pcall(MarketplaceService.UserOwnsGamePassAsync, MarketplaceService, player.UserId, passId)
@@ -60,7 +59,6 @@ local function tryUserOwnsGamePassAsync(retry, player)
 					task.wait(2)
 				end
 			end
-		end)
 	end
 end
 
@@ -120,11 +118,11 @@ MarketplaceService.ProcessReceipt = processReceipt
 
 
 MonotizationService._Init = function(player)
-	tryUserOwnsGamePassAsync(5, player) 
-
+	task.spawn(function() 
+		tryUserOwnsGamePassAsync(5, player) 
+	end)
 	MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player, id, success)
 		if success then grantPassReward(player, id) end
 	end)
-	
 end
 return MonotizationService
