@@ -18,7 +18,7 @@ local Services = StarterPlayer:WaitForChild("Services", 5)
 local ObbyEffect = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Remotes"):WaitForChild("ObbyEffect")
 
 -- 2. Basic models init
-	GameSystem.init()
+	GameSystem._init()
 	task.spawn(function()
 		MusicService._init()
 	end)
