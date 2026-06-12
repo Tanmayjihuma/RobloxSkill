@@ -17,6 +17,7 @@ local PROD_IDS = Config.DeveloperProducts
 -- GAMEPASS LOGIC (Permanent Unlocks)
 -- ==========================================
 local function grantPassReward(player, passId)
+	-- this part is just for understandins cuz different games need different types of data
 	if passId == PASS_IDS["DoubleCash"] then 
 		player:SetAttribute("DoubleCash", true)
 	elseif passId == PASS_IDS["DoubleWins"] then 
@@ -76,6 +77,7 @@ end
 -- DEVELOPER PRODUCT LOGIC (Consumables)
 -- ==========================================
 local productHandlers = {
+	-- this part is just for understanding cuz diffrent game need different types of data
 	[PROD_IDS["300Cash"]]  = function(p) StateService.UpdateCash(p, 300, false, true) return true end,
 	[PROD_IDS["1000Cash"]] = function(p) StateService.UpdateCash(p, 1000, false, true) return true end,
 	[PROD_IDS["2500Cash"]] = function(p) StateService.UpdateCash(p, 2500, false, true) return true end,
