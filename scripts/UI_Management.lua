@@ -1,4 +1,4 @@
-
+-- this is an example scripts contains methord to use in different scripts
 
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
