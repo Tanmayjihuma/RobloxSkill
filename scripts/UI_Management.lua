@@ -1,6 +1,4 @@
---OK LISSION THIS CODE IS JUST EXAMPLE Of EFFECTS 
--- WE MOSTLY NOT CREATE UI USING SCRIPTS 
--- THIE IS FOR COMMAND PANNEL SCRIPTS
+
 
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
