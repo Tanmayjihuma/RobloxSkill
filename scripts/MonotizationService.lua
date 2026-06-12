@@ -1,5 +1,3 @@
--- this is just example 
-
 local MonotizationService = {}
 
 local MarketplaceService = game:GetService("MarketplaceService")
@@ -18,59 +16,18 @@ local PROD_IDS = Config.DeveloperProducts
 -- ==========================================
 local function grantPassReward(player, passId)
 	-- this part is just for understandins cuz different games need different types of data
-	if passId == PASS_IDS["DoubleCash"] then 
-		player:SetAttribute("DoubleCash", true)
-	elseif passId == PASS_IDS["DoubleWins"] then 
-		player:SetAttribute("DoubleWins", true)
-	elseif passId == PASS_IDS["DoubleStreak"] then 
-		player:SetAttribute("DoubleStreak", true)
-	elseif passId == PASS_IDS["10x Cash"] then 
-		player:SetAttribute("10xCash", true)
-	elseif passId == PASS_IDS["10x Wins"] then 
-		player:SetAttribute("10xWins", true)
-	elseif passId == PASS_IDS["VIP"] then
-		player:SetAttribute("VIP", true)
-		local owned = player:GetAttribute("OwnedChairs") 
-		--print(owned)
-		if not owned then return end
-		
-		if not string.find(owned, "VIPChair") then
-			player:SetAttribute("OwnedChairs", owned .. ",VIPChair")
-		end
-
-	elseif passId == PASS_IDS["Starter_Pack"] then
-		local ownedChair = player:GetAttribute("OwnedChairs")
-		local ownedDeath = player:GetAttribute("OwnedDeath")
-		if not ownedChair or not ownedDeath  then return end
-		
-		if not string.find(ownedChair, "CrystalChair") then
-			player:SetAttribute("OwnedChairs", ownedChair .. ",CrystalChair")
-		end
-		
-		if not string.find(ownedDeath, "Freeze") then
-			player:SetAttribute("OwnedDeath", ownedDeath .. ",Freeze")
-		end
-		if not player:GetAttribute("GetStarterCash") then
-			player:SetAttribute("GetStarterCash", true)
-			StateService.UpdateCash(player, 500, false, false)
-			StateService.UpdateWins(player, 5, false, false)
-
-		end
-	elseif passId == PASS_IDS["Void Chair"] then
-		local owned = player:GetAttribute("OwnedChairs")
-		if not owned then return end
-		if not string.find(owned, "VoidChair") then
-			player:SetAttribute("OwnedChairs", owned.. ",VoidChair")
-		end
-
-	elseif passId == PASS_IDS["Void Death"] then
-		local owned = player:GetAttribute("OwnedDeath")
-		if not owned then return end
-		if not string.find(owned, "VoidEffect") then
-			player:SetAttribute("OwnedDeath", owned.. ",VoidEffect")
+	-- THIS IS EXAMPLE PART
+	if passId == PASS_IDS["EXAMPLE_DoubleMoney"] then 
+		player:SetAttribute("DoubleMoney", true) -- so we can use in playerStatsService
+	elseif passId == PASS_IDS["EXAMPLE_VIP_ITEM"] then
+		player:SetAttribute("VIP_ITEM", true) -- SO WE CAN USE IN OTHER SCRIPT 
+		local owned = player:GetAttribute("EXAMPLE_Owned_ITEMS") 
+		if not owned then return end -- Always return when data not found to prevent data loss
+		--FOR EXAMPLE 
+		if not string.find(owned, "EXAMPLE_Owned_ITEMS") then
+			player:SetAttribute("EXAMPLE_Owned_ITEMS", owned .. ",VIP_ITEMS")
 		end
 	end
-	
 end
 
 -- ==========================================
@@ -78,32 +35,10 @@ end
 -- ==========================================
 local productHandlers = {
 	-- this part is just for understanding cuz diffrent game need different types of data
-	[PROD_IDS["300Cash"]]  = function(p) StateService.UpdateCash(p, 300, false, true) return true end,
-	[PROD_IDS["1000Cash"]] = function(p) StateService.UpdateCash(p, 1000, false, true) return true end,
-	[PROD_IDS["2500Cash"]] = function(p) StateService.UpdateCash(p, 2500, false, true) return true end,
-	[PROD_IDS["5000Cash"]] = function(p) StateService.UpdateCash(p, 5000, false, true) return true end,
+	[PROD_IDS["EXAMPLE_MONEY_AMOUNT"]]  = function(p) StateService.UpdateCash(p, AMOUNT, false, true) return true end,
 
-	[PROD_IDS["10Wins"]]  = function(p) StateService.UpdateWin(p, 10, false, true) return true end,
-	[PROD_IDS["25Wins"]]  = function(p) StateService.UpdateWin(p, 25, false, true) return true end,
-	[PROD_IDS["50Wins"]]  = function(p) StateService.UpdateWin(p, 50, false, true) return true end,
-	[PROD_IDS["100Wins"]] = function(p) StateService.UpdateWin(p, 100, false, true) return true end,
-
-	[PROD_IDS["ReviveStreak"]] = function(p)
-		local lastStreak = p:GetAttribute("SavedLostStreak") or 0
-		if lastStreak > 0 then
-			local leaderstats = p:FindFirstChild("leaderstats")
-			if leaderstats and leaderstats:FindFirstChild("Streak") then
-				local currentValue = leaderstats.Streak.Value
-				if currentValue  then
-					if currentValue < lastStreak then
-						leaderstats.Streak.Value = lastStreak 
-					end
-				else
-					leaderstats.Streak.Value = lastStreak -- Restores the streak!
-				end
-			end
-			p:SetAttribute("SavedLostStreak", 0) -- Clear it out so they can't exploit it
-		end
+	[PROD_IDS["EXAMPLE_OTHERSTUFF"]] = function(p)
+		--OTHER STUFF CODE
 		return true
 	end,
 }
