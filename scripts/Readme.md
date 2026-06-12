@@ -246,7 +246,9 @@ Players.CharacterAutoLoads = false
 
 -- 8. Confirming onClientEvent loaded
 GuiLoadedRemote.OnServerEvent:Connect(function(player: Player, data: any)
-    -- Validate and flag client readiness
+   	if data == "CLIENTEVENTNAME_1" or data == "CLIENTEVENTNAME_2" or data == "CLIENTEVENTNAME_3" then
+		player:SetAttribute(data, true)
+	end
 end)
 
 -- 9. On Player Added
