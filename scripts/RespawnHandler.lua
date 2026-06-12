@@ -6,7 +6,7 @@ local NumberUtils = require(game.ReplicatedStorage.Services.NumberUtils)
 local REMOTES = game:GetService("ReplicatedStorage"):WaitForChild("Assets"):WaitForChild("Remotes")
 local ReviveRemote = REMOTES:WaitForChild("ReviveRemote")
 
--- createOveeheadUi only if needed  ask 
+-- createOveeheadUi(EXAMPLE) only if needed  ask 
 local function createOverheadUI(player, character)
 	local head = character:WaitForChild("Head")
 	local Streak
@@ -57,50 +57,8 @@ local function createOverheadUI(player, character)
 	nameStroke.Thickness = 4.5
 	nameStroke.Parent = nameLabel
 
-	-- ==========================================
-	-- STREAK SETUP (Top)
-	-- ==========================================
-	local streakLabel = Instance.new("TextLabel")
-	streakLabel.Name = "StreakLabel"
-	streakLabel.Size = UDim2.new(1, 0, 0.55, 0)
-
-	streakLabel.BackgroundTransparency = 1
-	streakLabel.Text = "🔥 "..tostring(Streak) 
-	streakLabel.TextColor3 = Color3.fromRGB(255, 215, 0) -- Golden Yellow
-	streakLabel.Font = Enum.Font.FredokaOne
-	streakLabel.TextScaled = true
-	streakLabel.LayoutOrder = 1
-	streakLabel.Parent = mainFrame
-
-	-- Thick Black Outline for Streak
-	local streakStroke = Instance.new("UIStroke")
-	streakStroke.Color = Color3.fromRGB(0, 0, 0)
-	streakStroke.Thickness = 4.5
-	streakStroke.Parent = streakLabel
-
-	-- Attach to player
+	
 	billboard.Parent = head
-
-
-	-- this also can change accorrding to condition
-	task.spawn(function()
-		local leaderstats = player:WaitForChild("leaderstats")
-		if leaderstats then
-			local streak = leaderstats:WaitForChild("Streak")
-			if streak then
-				-- Set initial value
-				streakLabel.Text = "🔥 " .. tostring(NumberUtils.Abbreviate(Streak.Value))
-				local connection = streak.Changed:Connect(function(newValue)
-					streakLabel.Text = "🔥 " .. tostring(NumberUtils.Abbreviate(newValue))
-				end)
-				billboard.Destroying:Connect(function()
-					if connection then
-						connection:Disconnect()
-					end
-				end)
-			end
-		end
-	end)
 end
 
 RespawnHandler.SpawnPlayer = function(player, SpawnLocation)
@@ -117,7 +75,8 @@ RespawnHandler.SpawnPlayer = function(player, SpawnLocation)
 	local root = character:WaitForChild("HumanoidRootPart")
 
 	if root and SpawnLocation then
-		createOverheadUI(player, character)
+		-- ADD SOME SPECIAL FUNTIONS FOR EXAMPLE :-
+		--createOverheadUI(player, character) 
 		root.Anchored = true 
 		root.CFrame = SpawnLocation.CFrame + Vector3.new(0, 5, 0)
 		task.wait(0.2)
