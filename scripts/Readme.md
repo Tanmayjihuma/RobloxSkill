@@ -12,7 +12,7 @@ Before diving into individual scripts, it is crucial to understand how data move
 We solve this by feeding defaults from `ReplicatedStorage.Config.DefaultData` and splitting our data into three distinct extraction types:
 
 ### 1. Attribute Data (Standard Stats)
-We load a table of standard stats (like levels, experience, or standard flags) and immediately assign them as Attributes on the player. Because our `AutoDataSavingService` dynamically reads the `DefaultData` config, any attribute listed there is automatically extracted from the player and safely saved. This ensures data is never lost.
+We load a table of standard stats (like DailyPlaytimeMinutes, ActiveQuests, TutorialCompleted or standard flags) and immediately assign them as Attributes on the player. Because our `AutoDataSavingService` dynamically reads the `DefaultData` config, any attribute listed there is automatically extracted from the player and safely saved. This ensures data is never lost.
 
 ### 2. Items Data (String-Based Arrays)
 Because **Roblox Attributes cannot store tables**, we store player inventories and owned items as comma-separated strings (e.g., `"item1,item2,item3"`). This data is loaded from its own specific DataStore name, separate from standard attributes, and saved by manually packaging the strings back into a table in the saving service.
