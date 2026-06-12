@@ -1,4 +1,5 @@
--- this is just for example 
+-- this is an example script contains some methords and u can use them to different scripts 
+
 local SoundService = game:GetService("SoundService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
