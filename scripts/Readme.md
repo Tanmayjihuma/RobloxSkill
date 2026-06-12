@@ -16,7 +16,8 @@ We load a table of standard stats (like levels, experience, or standard flags) a
 
 ### 2. Items Data (String-Based Arrays)
 Because **Roblox Attributes cannot store tables**, we store player inventories and owned items as comma-separated strings (e.g., `"item1,item2,item3"`). This data is loaded from its own specific DataStore name, separate from standard attributes, and saved by manually packaging the strings back into a table in the saving service.
-*Generic Example of safely granting an item:*
+
+*Generic Example of safely finding and updating an item string:*
 ```lua
 local owned = player:GetAttribute("MyOwnedItems")
 if not owned then return end -- Prevent data loss if data hasn't loaded yet!
@@ -27,7 +28,7 @@ if not string.find(owned, "NewItemName") then
 end
 ```
 
-### 3. Leaderstat Data (Ordered Data)
+### 3. Leaderstate Data (Ordered Data)
 Data that needs to be displayed on a Global Leaderboard (like Wins or Highest Streak) cannot be stored in a normal table. It must be saved as standalone numbers using `OrdinaryDataService` (a wrapper for `OrderedDataStore`). These numbers are loaded and assigned directly to the `ValueBase` objects inside the player's `leaderstats` folder.
 
 ### The Lifecycle Control (ServerInit Process)
@@ -35,7 +36,18 @@ Data that needs to be displayed on a Global Leaderboard (like Wins or Highest St
 2. **Assignment:** It assigns the loaded data to Attributes (for standard stats and string-based item lists) and to the `leaderstats` folder. 
 3. **Validation:** It flags the data as successfully loaded (`_G.DataLoaded`). Only then does it allow the physical character to spawn.
 4. **Modification:** Throughout gameplay, use `PlayerStateService` to change these stats safely (it handles multipliers automatically). Use `GetAttribute()` and `.Changed` on leaderstats to allow other scripts to react to data changes.
-    * **Note:** Now since we used so good data system and all data loaded for all other script if data not find somehow we can just return instead of making it 0 or default (not use like `local DataStats = player:GetAttribute("Stats") or 0` instead like `local DataStats = player:GetAttribute("DataStats")  if not DataStats then return end`)
+    * **Note:** Since our robust data system ensures all data is loaded before the character spawns, if data is somehow not found when queried by another script, we should simply `return` to abort the operation instead of setting it to `0`. 
+    
+    *For example:*
+    ```lua
+    -- ❌ BAD: Defaulting to 0 can corrupt actual data if it just hasn't loaded
+    local myStat = player:GetAttribute("MyStat") or 0 
+    
+    -- ✅ GOOD: Safely return and abort the script
+    local myStat = player:GetAttribute("MyStat") 
+    if not myStat then return end
+    ```
+
 5. **Persistence:** `AutoDataSavingService` sweeps the player object periodically and on-leave, reading the live Attributes, string-based Items, and Leaderstats, securely packing them back into their respective DataStores.
 
 ---
@@ -47,86 +59,140 @@ Data that needs to be displayed on a Global Leaderboard (like Wins or Highest St
 **Functions:**
 *   `SaveLeaderstatsData(player)`
     *   **Features:** Specifically saves numerical values attached to the `leaderstats` folder to the `OrderedDataStore`. Clears the loaded flag upon save to prevent duplicate saves.
-    *   **Example Usage:** `AutoDataSavingService.SaveLeaderstatsData(player)`
+    *   **Example Usage:** 
+        ```lua
+        AutoDataSavingService.SaveLeaderstatsData(player)
+        ```
 *   `SaveAttributesData(player)`
     *   **Features:** Iterates through a predefined list of attributes from the configuration and saves them as a standard dictionary via `DataStoreService`.
-    *   **Example Usage:** `AutoDataSavingService.SaveAttributesData(player)`
+    *   **Example Usage:**
+        ```lua
+        AutoDataSavingService.SaveAttributesData(player)
+        ```
 *   `SaveItemsData(player)`
     *   **Features:** Packages inventory or cosmetic attributes into a structured table and ensures they are safely saved to the datastore.
-    *   **Example Usage:** `AutoDataSavingService.SaveItemsData(player)`
+    *   **Example Usage:**
+        ```lua
+        AutoDataSavingService.SaveItemsData(player)
+        ```
 
 ### 2. DataService
 **File Overview:** Provides generalized, robust operations for standard `DataStoreService`. Handles loading, saving, retries, and data reconciliation for table-based structures.
 **Functions:**
 *   `loadPlayerData(DataType, attempts, kickOnFail, player, defaultData, setAttributes)`
     *   **Features:** Attempts to load data with exponential backoff. Reconciles missing keys dynamically and can optionally set the loaded keys as attributes on the player immediately.
-    *   **Example Usage:** `local data = DataService.loadPlayerData("MyDataStore", 3, true, player, {MyStat1 = 0, MyStat2 = 5}, true)`
+    *   **Example Usage:**
+        ```lua
+        local data = DataService.loadPlayerData("MyDataStore", 3, true, player, {MyStat1 = 0, MyStat2 = 5}, true)
+        ```
 *   `savePlayerData(DataType, attempts, kickOnFail, warnOnFail, player, dataToSave)`
     *   **Features:** Uses `UpdateAsync` to safely write table data to the DataStore, preventing older server instances from overwriting newer data.
-    *   **Example Usage:** `DataService.savePlayerData("MyDataStore", 3, false, true, player, {MyStat1 = 10})`
+    *   **Example Usage:**
+        ```lua
+        DataService.savePlayerData("MyDataStore", 3, false, true, player, {MyStat1 = 10})
+        ```
 
 ### 3. MonotizationService
 **File Overview:** Centralizes all Marketplace logic. Handles the verification of GamePass ownership and processes Developer Product purchases idempotently.
 **Functions:**
 *   `tryUserOwnsGamePassAsync(retry, player)`
     *   **Features:** Checks GamePass ownership asynchronously with network retry safety. If owned, triggers the internal reward granting logic.
-    *   **Example Usage:** `MonotizationService.tryUserOwnsGamePassAsync(3, player)`
+    *   **Example Usage:**
+        ```lua
+        MonotizationService.tryUserOwnsGamePassAsync(3, player)
+        ```
 
 ### 4. NumberUtils
 **File Overview:** A pure utility module for formatting UI and mathematical strings.
 **Functions:**
 *   `Abbreviate(n)`
     *   **Features:** Converts large numbers to string suffixes (e.g., 1000 becomes 1k, 1,000,000 becomes 1M) for clean UI displays.
-    *   **Example Usage:** `local text = NumberUtils.Abbreviate(15000) -- returns "15k"`
+    *   **Example Usage:**
+        ```lua
+        local text = NumberUtils.Abbreviate(15000) -- returns "15k"
+        ```
 
 ### 5. OrdinaryDataService
 **File Overview:** A wrapper specifically for `OrderedDataStore` used to manage single integer values, allowing for the creation of global leaderboards.
 **Functions:**
 *   `loadPlayerData(DataType, attempts, kickOnFail, player, defaultValue, attributeNameToSet)`
     *   **Features:** Loads a single `Number` value from an OrderedDataStore and can bind it directly to an attribute or leaderstat.
-    *   **Example Usage:** `OrdinaryDataService.loadPlayerData("MyGlobalStat", 3, false, player, 0, "MyAttribute")`
+    *   **Example Usage:**
+        ```lua
+        OrdinaryDataService.loadPlayerData("MyGlobalStat", 3, false, player, 0, "MyAttribute")
+        ```
 *   `savePlayerData(DataType, attempts, kickOnFail, warnOnFail, player, intValue)`
     *   **Features:** Saves a single `Number` value securely to the OrderedDataStore.
-    *   **Example Usage:** `OrdinaryDataService.savePlayerData("MyGlobalStat", 3, false, true, player, 100)`
+    *   **Example Usage:**
+        ```lua
+        OrdinaryDataService.savePlayerData("MyGlobalStat", 3, false, true, player, 100)
+        ```
 *   `startGlobalLeaderboard(DataType, baseDelay, maxAttempts, leaderstatModel, updateTime, retryTime, titleText)`
     *   **Features:** Spawns a persistent background thread to fetch top scores, caches usernames to save API calls, and updates a physical workspace leaderboard model.
-    *   **Example Usage:** `OrdinaryDataService.startGlobalLeaderboard("MyGlobalStat", 2, 20, workspace.MyBoard, 120, 30, "Top Stats")`
+    *   **Example Usage:**
+        ```lua
+        OrdinaryDataService.startGlobalLeaderboard("MyGlobalStat", 2, 20, workspace.MyBoard, 120, 30, "Top Stats")
+        ```
 
 ### 6. PlayerStateService
 **File Overview:** A centralized controller for modifying player statistics. It intercepts state changes to apply active multipliers (like VIP or Gamepasses).
 **Functions:**
 *   `Update_Stats_FROM_ATTRUBUTE(player, amount, reset, isRbxReward, initMultiplayer, statName)`
     *   **Features:** Modifies a specific attribute. Automatically searches for a corresponding "Double" attribute (e.g., `DoubleYourStat`) and applies multipliers before saving the value.
-    *   **Example Usage:** `PlayerStateService.Update_Stats_FROM_ATTRUBUTE(player, 50, false, false, 1, "MyAttribute")`
+    *   **Example Usage:**
+        ```lua
+        PlayerStateService.Update_Stats_FROM_ATTRUBUTE(player, 50, false, false, 1, "MyAttribute")
+        ```
 *   `Update_Stats_FROM_LeaderStats(player, amount, reset, isRbxReward, initMultiplayer, statName)`
     *   **Features:** Functions identically to the attribute updater but modifies a physical `ValueBase` object inside the player's `leaderstats` folder.
-    *   **Example Usage:** `PlayerStateService.Update_Stats_FROM_LeaderStats(player, 1, false, false, 1, "MyLeaderstat")`
+    *   **Example Usage:**
+        ```lua
+        PlayerStateService.Update_Stats_FROM_LeaderStats(player, 1, false, false, 1, "MyLeaderstat")
+        ```
 
 ### 7. RespawnHandler
 **File Overview:** Controls the physical character lifecycle, including spawning and UI attachment.
 **Functions:**
 *   `Init(player, SpawnLocation)`
     *   **Features:** Binds to the player's death event to initiate the respawn sequence automatically.
-    *   **Example Usage:** `RespawnHandler.Init(player, workspace.SpawnPart)`
+    *   **Example Usage:**
+        ```lua
+        RespawnHandler.Init(player, workspace.SpawnPart)
+        ```
 *   `SpawnPlayer(player, SpawnLocation)`
     *   **Features:** Forces character loading and safely teleports their PrimaryPart to a specific spawn location. Dynamically attaches overhead UIs.
-    *   **Example Usage:** `RespawnHandler.SpawnPlayer(player, workspace.SpawnPart)`
+    *   **Example Usage:**
+        ```lua
+        RespawnHandler.SpawnPlayer(player, workspace.SpawnPart)
+        ```
 
 ### 8. UI_Management
 **File Overview:** A centralized manager for handling the visibility and state of UI screens, providing built-in animation methods and a notification system.
 **Functions:**
 *   `SetTheme(themeName)`
     *   **Features:** Updates the visual theme of the UI dynamically.
-    *   **Example Usage:** `UI_Management.SetTheme("Dark")`
+    *   **Example Usage:**
+        ```lua
+        UI_Management.SetTheme("Dark")
+        ```
 *   `ShowScreen(name, animation)` & `HideScreen(...)`
     *   **Features:** Toggles UI panel visibility with predefined tween animations (e.g., Fade, Slide, Scale).
-    *   **Example Usage:** `UI_Management.ShowScreen("ShopPanel", "Fade")`
+    *   **Example Usage:**
+        ```lua
+        UI_Management.ShowScreen("ShopPanel", "Fade")
+        ```
 *   `ShowNotification(text, duration, notificationType)`
     *   **Features:** Displays a temporary pop-up toast notification to the user.
-    *   **Example Usage:** `UI_Management.ShowNotification("Purchase Successful!", 3, "Success")`
+    *   **Example Usage:**
+        ```lua
+        UI_Management.ShowNotification("Purchase Successful!", 3, "Success")
+        ```
 *   `AnimateElement(element, animation, callback)`
     *   **Features:** Helper to apply specific `TweenService` effects to UI elements.
-    *   **Example Usage:** `UI_Management.AnimateElement(myButton, "Bounce")`
+    *   **Example Usage:**
+        ```lua
+        UI_Management.AnimateElement(myButton, "Bounce")
+        ```
 
 ---
 
