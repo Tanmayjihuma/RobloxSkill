@@ -1,7 +1,7 @@
 -- 1. Loading basic things and services
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterPlayer = game:GetService("StarterPlayer") -- FIXED: Missing service definition
+local StarterPlayer = game:GetService("StarterPlayer") 
 local StarterGui = game:GetService("StarterGui")
 local ProximityPromptService = game:GetService("ProximityPromptService")
 
