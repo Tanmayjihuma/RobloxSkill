@@ -39,7 +39,7 @@ AutoDataSavingService.SaveAttributesData= function(player)
 	DataService.savePlayerData(DATA_TYPE_EXAMPLE_ATTRIBUTE, 4, false, true, player, dataToSave)
 end
 
--- FOR ITEMS OR OTHER DATA (WHEN DATA CONTAINS TABLE)
+-- FOR ITEMS OR OTHER DATA (WHEN DATA need contains table we save it like "t1,t2,t2" in attribute)
 AutoDataSavingService.SaveItemsData = function(player)
 	if _G.DataLoaded[player.UserId.."ITEMS_DATA_LOADED"] then
 		local dataToSave = {
