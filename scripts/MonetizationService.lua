@@ -1,4 +1,4 @@
-local MonotizationService = {}
+local MonetizationService = {}
 
 local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
@@ -111,13 +111,13 @@ MarketplaceService.ProcessReceipt = processReceipt
 
 
 --serverinit
-MonotizationService._Init = function()
+MonetizationService._Init = function()
 	MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player, id, success)
 		if success then grantPassReward(player, id) end
 	end)
 end
 -- player added init
-MonotizationService.Init = function(player) 
+MonetizationService.Init = function(player) 
 	task.spawn(function() 
 		tryUserOwnsGamePassAsync(5, player) 
 	end)
@@ -126,4 +126,4 @@ end
 
 
 
-return MonotizationService
+return MonetizationService
