@@ -52,151 +52,167 @@ Data that needs to be displayed on a Global Leaderboard (like Wins or Highest St
 
 ---
 
-## Core Services Overview
+## 🛠️ Core Services Overview
 
 ### 1. AutoDataSavingService
-**File Overview:** Orchestrates the automatic persistence of player data across three distinct categories: Leaderstats, Attributes, and Items.
-**Functions:**
-*   `SaveLeaderstatsData(player: Player)`
-    *   **Features:** Specifically saves numerical values attached to the `leaderstats` folder to the `OrderedDataStore`. Clears the loaded flag upon save to prevent duplicate saves.
-    *   **Example Usage:** 
-        ```lua
-        AutoDataSavingService.SaveLeaderstatsData(player: Player)
-        ```
-*   `SaveAttributesData(player: Player)`
-    *   **Features:** Iterates through a predefined list of attributes from the configuration and saves them as a standard dictionary via `DataStoreService`.
-    *   **Example Usage:**
-        ```lua
-        AutoDataSavingService.SaveAttributesData(player: Player)
-        ```
-*   `SaveItemsData(player: Player)`
-    *   **Features:** Packages inventory or cosmetic attributes into a structured table and ensures they are safely saved to the datastore.
-    *   **Example Usage:**
-        ```lua
-        AutoDataSavingService.SaveItemsData(player: Player)
-        ```
+*   **Location:** `ServerScriptService > Services > DataManager > AutoDataSavingService.lua`
+*   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/AutoDataSavingService.lua)
+*   **File Overview:** Orchestrates the automatic persistence of player data across three distinct categories: Leaderstats, Attributes, and Items.
+*   **Functions:**
+    *   `SaveLeaderstatsData(player: Player)`
+        *   **Features:** Specifically saves numerical values attached to the `leaderstats` folder to the `OrderedDataStore`. Clears the loaded flag upon save to prevent duplicate saves.
+        *   **Example Usage:** 
+            ```lua
+            AutoDataSavingService.SaveLeaderstatsData(player: Player)
+            ```
+    *   `SaveAttributesData(player: Player)`
+        *   **Features:** Iterates through a predefined list of attributes from the configuration and saves them as a standard dictionary via `DataStoreService`.
+        *   **Example Usage:**
+            ```lua
+            AutoDataSavingService.SaveAttributesData(player: Player)
+            ```
+    *   `SaveItemsData(player: Player)`
+        *   **Features:** Packages inventory or cosmetic attributes into a structured table and ensures they are safely saved to the datastore.
+        *   **Example Usage:**
+            ```lua
+            AutoDataSavingService.SaveItemsData(player: Player)
+            ```
 
 ### 2. DataService
-**File Overview:** Provides generalized, robust operations for standard `DataStoreService`. Handles loading, saving, retries, and data reconciliation for table-based structures.
-**Functions:**
-*   `loadPlayerData(DataType: string, attempts: number, kickOnFail: boolean, player: Player, defaultData: any, setAttributes: boolean)`
-    *   **Features:** Attempts to load data with exponential backoff. Reconciles missing keys dynamically and can optionally set the loaded keys as attributes on the player immediately.
-    *   **Example Usage:**
-        ```lua
-        local data: any = DataService.loadPlayerData("MyDataStore", 3, true, player, {MyStat1 = 0, MyStat2 = 5}, true)
-        ```
-*   `savePlayerData(DataType: string, attempts: number, kickOnFail: boolean, warnOnFail: boolean, player: Player, dataToSave: any)`
-    *   **Features:** Uses `UpdateAsync` to safely write table data to the DataStore, preventing older server instances from overwriting newer data.
-    *   **Example Usage:**
-        ```lua
-        DataService.savePlayerData("MyDataStore", 3, false, true, player, {MyStat1 = 10})
-        ```
+*   **Location:** `ServerScriptService > Services > DataManager > DataService.lua`
+*   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/DataService.lua)
+*   **File Overview:** Provides generalized, robust operations for standard `DataStoreService`. Handles loading, saving, retries, and data reconciliation for table-based structures.
+*   **Functions:**
+    *   `loadPlayerData(DataType: string, attempts: number, kickOnFail: boolean, player: Player, defaultData: any, setAttributes: boolean)`
+        *   **Features:** Attempts to load data with exponential backoff. Reconciles missing keys dynamically and can optionally set the loaded keys as attributes on the player immediately.
+        *   **Example Usage:**
+            ```lua
+            local data: any = DataService.loadPlayerData("MyDataStore", 3, true, player, {MyStat1 = 0, MyStat2 = 5}, true)
+            ```
+    *   `savePlayerData(DataType: string, attempts: number, kickOnFail: boolean, warnOnFail: boolean, player: Player, dataToSave: any)`
+        *   **Features:** Uses `UpdateAsync` to safely write table data to the DataStore, preventing older server instances from overwriting newer data.
+        *   **Example Usage:**
+            ```lua
+            DataService.savePlayerData("MyDataStore", 3, false, true, player, {MyStat1 = 10})
+            ```
 
 ### 3. MonotizationService
-**File Overview:** Centralizes all Marketplace logic. Handles the verification of GamePass ownership and processes Developer Product purchases idempotently.
-**Functions:**
-*   `tryUserOwnsGamePassAsync(retry: number, player: Player)`
-    *   **Features:** Checks GamePass ownership asynchronously with network retry safety. If owned, triggers the internal reward granting logic.
-    *   **Example Usage:**
-        ```lua
-        MonotizationService.tryUserOwnsGamePassAsync(3, player: Player)
-        ```
+*   **Location:** `ServerScriptService > Services > MonotizationService.lua`
+*   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/MonotizationService.lua)
+*   **File Overview:** Centralizes all Marketplace logic. Handles the verification of GamePass ownership and processes Developer Product purchases idempotently.
+*   **Functions:**
+    *   `tryUserOwnsGamePassAsync(retry: number, player: Player)`
+        *   **Features:** Checks GamePass ownership asynchronously with network retry safety. If owned, triggers the internal reward granting logic.
+        *   **Example Usage:**
+            ```lua
+            MonotizationService.tryUserOwnsGamePassAsync(3, player: Player)
+            ```
 
 ### 4. NumberUtils
-**File Overview:** A pure utility module for formatting UI and mathematical strings.
-**Functions:**
-*   `Abbreviate(n: number)`
-    *   **Features:** Converts large numbers to string suffixes (e.g., 1000 becomes 1k, 1,000,000 becomes 1M) for clean UI displays.
-    *   **Example Usage:**
-        ```lua
-        local text: string = NumberUtils.Abbreviate(15000) -- returns "15k"
-        ```
+*   **Location:** `ReplicatedStorage > SharedScripts > NumberUtils.lua`
+*   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/NumberUtils.lua)
+*   **File Overview:** A pure utility module for formatting UI and mathematical strings.
+*   **Functions:**
+    *   `Abbreviate(n: number)`
+        *   **Features:** Converts large numbers to string suffixes (e.g., 1000 becomes 1k, 1,000,000 becomes 1M) for clean UI displays.
+        *   **Example Usage:**
+            ```lua
+            local text: string = NumberUtils.Abbreviate(15000) -- returns "15k"
+            ```
 
 ### 5. OrdinaryDataService
-**File Overview:** A wrapper specifically for `OrderedDataStore` used to manage single integer values, allowing for the creation of global leaderboards.
-**Functions:**
-*   `loadPlayerData(DataType: string, attempts: number, kickOnFail: boolean, player: Player, defaultValue: number, attributeNameToSet: string)`
-    *   **Features:** Loads a single `Number` value from an OrderedDataStore and can bind it directly to an attribute or leaderstat.
-    *   **Example Usage:**
-        ```lua
-        OrdinaryDataService.loadPlayerData("MyGlobalStat", 3, false, player, 0, "MyAttribute")
-        ```
-*   `savePlayerData(DataType: string, attempts: number, kickOnFail: boolean, warnOnFail: boolean, player: Player, intValue: number)`
-    *   **Features:** Saves a single `Number` value securely to the OrderedDataStore.
-    *   **Example Usage:**
-        ```lua
-        OrdinaryDataService.savePlayerData("MyGlobalStat", 3, false, true, player, 100)
-        ```
-*   `startGlobalLeaderboard(DataType: string, baseDelay: number, maxAttempts: number, leaderstatModel: Model, updateTime: number, retryTime: number, titleText: string)`
-    *   **Features:** Spawns a persistent background thread to fetch top scores, caches usernames to save API calls, and updates a physical workspace leaderboard model.
-    *   **Example Usage:**
-        ```lua
-        OrdinaryDataService.startGlobalLeaderboard("MyGlobalStat", 2, 20, workspace.MyBoard, 120, 30, "Top Stats")
-        ```
+*   **Location:** `ServerScriptService > Services > DataManager > OrdinaryDataService.lua`
+*   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/OrdinaryDataService.lua)
+*   **File Overview:** A wrapper specifically for `OrderedDataStore` used to manage single integer values, allowing for the creation of global leaderboards.
+*   **Functions:**
+    *   `loadPlayerData(DataType: string, attempts: number, kickOnFail: boolean, player: Player, defaultValue: number, attributeNameToSet: string)`
+        *   **Features:** Loads a single `Number` value from an OrderedDataStore and can bind it directly to an attribute or leaderstat.
+        *   **Example Usage:**
+            ```lua
+            OrdinaryDataService.loadPlayerData("MyGlobalStat", 3, false, player, 0, "MyAttribute")
+            ```
+    *   `savePlayerData(DataType: string, attempts: number, kickOnFail: boolean, warnOnFail: boolean, player: Player, intValue: number)`
+        *   **Features:** Saves a single `Number` value securely to the OrderedDataStore.
+        *   **Example Usage:**
+            ```lua
+            OrdinaryDataService.savePlayerData("MyGlobalStat", 3, false, true, player, 100)
+            ```
+    *   `startGlobalLeaderboard(DataType: string, baseDelay: number, maxAttempts: number, leaderstatModel: Model, updateTime: number, retryTime: number, titleText: string)`
+        *   **Features:** Spawns a persistent background thread to fetch top scores, caches usernames to save API calls, and updates a physical workspace leaderboard model.
+        *   **Example Usage:**
+            ```lua
+            OrdinaryDataService.startGlobalLeaderboard("MyGlobalStat", 2, 20, workspace.MyBoard, 120, 30, "Top Stats")
+            ```
 
-### 6. PlayerStateService
-**File Overview:** A centralized controller for modifying player statistics. It intercepts state changes to apply active multipliers (like VIP or Gamepasses).
-**Functions:**
-*   `Update_Stats_FROM_ATTRUBUTE(player: Player, amount: number, reset: boolean, isRbxReward: boolean, initMultiplayer: number, statName: string)`
-    *   **Features:** Modifies a specific attribute. Automatically searches for a corresponding "Double" attribute (e.g., `DoubleYourStat`) and applies multipliers before saving the value.
-    *   **Example Usage:**
-        ```lua
-        PlayerStateService.Update_Stats_FROM_ATTRUBUTE(player, 50, false, false, 1, "MyAttribute")
-        ```
-*   `Update_Stats_FROM_LeaderStats(player: Player, amount: number, reset: boolean, isRbxReward: boolean, initMultiplayer: number, statName: string)`
-    *   **Features:** Functions identically to the attribute updater but modifies a physical `ValueBase` object inside the player's `leaderstats` folder.
-    *   **Example Usage:**
-        ```lua
-        PlayerStateService.Update_Stats_FROM_LeaderStats(player, 1, false, false, 1, "MyLeaderstat")
-        ```
+### 6. PlayerStateService (StatesService)
+*   **Location:** `ServerScriptService > Services > StatesService.lua`
+*   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/StatesService.lua)
+*   **File Overview:** A centralized controller for modifying player statistics. It intercepts state changes to apply active multipliers (like VIP or Gamepasses).
+*   **Functions:**
+    *   `Update_Stats_FROM_ATTRUBUTE(player: Player, amount: number, reset: boolean, isRbxReward: boolean, initMultiplayer: number, statName: string)`
+        *   **Features:** Modifies a specific attribute. Automatically searches for a corresponding "Double" attribute (e.g., `DoubleYourStat`) and applies multipliers before saving the value.
+        *   **Example Usage:**
+            ```lua
+            PlayerStateService.Update_Stats_FROM_ATTRUBUTE(player, 50, false, false, 1, "MyAttribute")
+            ```
+    *   `Update_Stats_FROM_LeaderStats(player: Player, amount: number, reset: boolean, isRbxReward: boolean, initMultiplayer: number, statName: string)`
+        *   **Features:** Functions identically to the attribute updater but modifies a physical `ValueBase` object inside the player's `leaderstats` folder.
+        *   **Example Usage:**
+            ```lua
+            PlayerStateService.Update_Stats_FROM_LeaderStats(player, 1, false, false, 1, "MyLeaderstat")
+            ```
 
 ### 7. RespawnHandler
-**File Overview:** Controls the physical character lifecycle, including spawning and UI attachment.
-**Functions:**
-*   `Init(player: Player, SpawnLocation: BasePart)`
-    *   **Features:** Binds to the player's death event to initiate the respawn sequence automatically.
-    *   **Example Usage:**
-        ```lua
-        RespawnHandler.Init(player, workspace.SpawnPart)
-        ```
-*   `SpawnPlayer(player: Player, SpawnLocation: BasePart)`
-    *   **Features:** Forces character loading and safely teleports their PrimaryPart to a specific spawn location. Dynamically attaches overhead UIs.
-    *   **Example Usage:**
-        ```lua
-        RespawnHandler.SpawnPlayer(player, workspace.SpawnPart)
-        ```
+*   **Location:** `ServerScriptService > Systems > RespawnHandler.lua`
+*   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/RespawnHandler.lua)
+*   **File Overview:** Controls the physical character lifecycle, including spawning and UI attachment.
+*   **Functions:**
+    *   `Init(player: Player, SpawnLocation: BasePart)`
+        *   **Features:** Binds to the player's death event to initiate the respawn sequence automatically.
+        *   **Example Usage:**
+            ```lua
+            RespawnHandler.Init(player, workspace.SpawnPart)
+            ```
+    *   `SpawnPlayer(player: Player, SpawnLocation: BasePart)`
+        *   **Features:** Forces character loading and safely teleports their PrimaryPart to a specific spawn location. Dynamically attaches overhead UIs.
+        *   **Example Usage:**
+            ```lua
+            RespawnHandler.SpawnPlayer(player, workspace.SpawnPart)
+            ```
 
 ### 8. UI_Management
-**File Overview:** A centralized manager for handling the visibility and state of UI screens, providing built-in animation methods and a notification system.
-**Functions:**
-*   `SetTheme(themeName: string)`
-    *   **Features:** Updates the visual theme of the UI dynamically.
-    *   **Example Usage:**
-        ```lua
-        UI_Management.SetTheme("Dark")
-        ```
-*   `ShowScreen(name: string, animation: string)` & `HideScreen(...)`
-    *   **Features:** Toggles UI panel visibility with predefined tween animations (e.g., Fade, Slide, Scale).
-    *   **Example Usage:**
-        ```lua
-        UI_Management.ShowScreen("ShopPanel", "Fade")
-        ```
-*   `ShowNotification(text: string, duration: number, notificationType: string)`
-    *   **Features:** Displays a temporary pop-up toast notification to the user.
-    *   **Example Usage:**
-        ```lua
-        UI_Management.ShowNotification("Purchase Successful!", 3, "Success")
-        ```
-*   `AnimateElement(element: GuiObject, animation: string, callback: () -> ())`
-    *   **Features:** Helper to apply specific `TweenService` effects to UI elements.
-    *   **Example Usage:**
-        ```lua
-        UI_Management.AnimateElement(myButton, "Bounce")
-        ```
+*   **Location:** `StarterPlayer > StarterPlayerScripts > Services > UI_Management.lua`
+*   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/UI_Management.lua)
+*   **File Overview:** A centralized manager for handling the visibility and state of UI screens, providing built-in animation methods and a notification system.
+*   **Functions:**
+    *   `SetTheme(themeName: string)`
+        *   **Features:** Updates the visual theme of the UI dynamically.
+        *   **Example Usage:**
+            ```lua
+            UI_Management.SetTheme("Dark")
+            ```
+    *   `ShowScreen(name: string, animation: string)` & `HideScreen(...)`
+        *   **Features:** Toggles UI panel visibility with predefined tween animations (e.g., Fade, Slide, Scale).
+        *   **Example Usage:**
+            ```lua
+            UI_Management.ShowScreen("ShopPanel", "Fade")
+            ```
+    *   `ShowNotification(text: string, duration: number, notificationType: string)`
+        *   **Features:** Displays a temporary pop-up toast notification to the user.
+        *   **Example Usage:**
+            ```lua
+            UI_Management.ShowNotification("Purchase Successful!", 3, "Success")
+            ```
+    *   `AnimateElement(element: GuiObject, animation: string, callback: () -> ())`
+        *   **Features:** Helper to apply specific `TweenService` effects to UI elements.
+        *   **Example Usage:**
+            ```lua
+            UI_Management.AnimateElement(myButton, "Bounce")
+            ```
 
 ---
 
-## Architecture & Initialization
+## 🏛️ Architecture & Initialization
 
 ### 📜 Naming & Workflow Conventions
 Before examining the initialization scripts, note our standardized naming convention for initialization functions:
@@ -205,8 +221,9 @@ Before examining the initialization scripts, note our standardized naming conven
 - **`_init`**: Client-side initialization logic residing within **StarterPlayer** scripts.
 
 ### 9. ServerInit
-**Location:** `ServerScriptService`
-**File Overview:** The master server entry point. It orchestrates the startup of all server-side services and strictly controls the player data lifecycle.
+*   **Location:** `ServerScriptService > ServerInit.lua`
+*   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/ServerInit.lua)
+*   **File Overview:** The master server entry point. It orchestrates the startup of all server-side services and strictly controls the player data lifecycle.
 
 **Execution Steps:**
 1. Defining Basic Services
@@ -279,8 +296,9 @@ end)
 ```
 
 ### 10. PlayerInit
-**Location:** `StarterPlayer > StarterPlayerScripts` (or `StarterPlayer`)
-**File Overview:** The master client entry point. Boots up local services when the client environment loads and ensures logic fires correctly relative to the character spawning.
+*   **Location:** `StarterPlayer > StarterPlayerScripts > PlayerInit.lua`
+*   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/PlayerInit.lua)
+*   **File Overview:** The master client entry point. Boots up local services when the client environment loads and ensures logic fires correctly relative to the character spawning.
 
 **Execution Steps:**
 1. Loading basic things and services (Yields for required client-side folders)
@@ -323,43 +341,56 @@ Player.CharacterRemoving:Connect(function(character: Model)
     -- some stuff on character removal if needed
 end)
 ```
+
 ---
 
-## 📂 Advanced Features & Recommended File Structure
+## 📂 Project Organization & Advanced Features
 
-### 🏗️ File Structure
+### 🏗️ Recommended File Structure
 Use `WaitForChild` in local scripts. On the server, whether to use `WaitForChild` depends on the condition (e.g., if objects are created dynamically while playing or after map loading).
 
-**ReplicatedStorage/**
-*   `Config/`: Stores default data tables (e.g., `DefaultData.lua`).
-*   `Assets/`:
-    *   `Remotes/`: All RemoteEvents and RemoteFunctions.
-    *   `Models/`: Shared models.
-    *   `VFX/SFX/`: Visual and sound effects (if large or server-dependent, store in `ServerStorage`).
-*   `SharedScripts/`: Modules used by both server and client.
-*   `Classes/`: OOP class definitions (if needed).
-
-**ServerScriptService/**
-*   `ServerInit.server.lua`: Master entry point.
-*   `Services/`: Modular server-side logic.
-*   `Systems/`: Higher-level gameplay systems.
-
-**StarterGui/**
-*   `ClientMain.client.lua`: Main UI controller.
-
-**ServerStorage/**
-*   `Models/`: Server-only models.
-*   `Musics/`: Audio assets.
-*   `TRASH/`: To store old or unused systems for reference.
-
-**StarterPlayer/**
-*   **StarterCharacterScripts**:
-    *   `CharacterInit`: Character-specific initialization.
-    *   `GuiInit`: Local UI setup.
-*   **StarterPlayerScripts**:
-    *   `PlayerInit`: Global client initialization.
-    *   `Services/`: Client-side modules.
-    *   `Systems/`: Client-side gameplay logic.
+```text
+Root/
+├── ReplicatedStorage/
+│   ├── Config/
+│   │   └── DefaultData.lua          -- Default player stats & configs
+│   ├── Assets/
+│   │   ├── Remotes/                 -- All RemoteEvents & Functions
+│   │   ├── Models/                  -- Shared 3D models
+│   │   └── VFX_SFX/                 -- Visual/Sound effects (Shared)
+│   ├── SharedScripts/
+│   │   └── NumberUtils.lua          -- EX: Utilities used by both Server/Client
+│   └── Classes/                     -- OOP class definitions (if needed)
+│
+├── ServerScriptService/
+│   ├── ServerInit.lua               -- Master server entry point
+│   ├── Services/                    -- Modular server-side logic
+│   │   ├── DataManager/             -- DATASERVICE.LUA, AUTODATASAVINGSERVICE.LUA, ORDINARY DATA SAVING SERVICE
+│   │   │   ├── DataService.lua
+│   │   │   ├── AutoDataSavingService.lua
+│   │   │   └── OrdinaryDataService.lua
+│   │   ├── MonotizationService.lua
+│   │   └── StatesService.lua        -- Player stats & multipliers
+│   └── Systems/                     -- server side gameplay systems
+│       └── RespawnHandler.lua       -- RESPAWN HANDLER
+│
+├── ServerStorage/
+│   ├── Models/                      -- Server-only assets
+│   ├── Musics/                      -- Audio assets
+│   └── TRASH/                       -- Archive of legacy systems (TO STORE OLD SYSTEMS THAT WAS NOT USEFULL)
+│
+├── StarterGui/
+│   └── ClientMain.client.lua        -- Main UI controller logic
+│
+└── StarterPlayer/
+    ├── StarterCharacterScripts/     -- CHARACTER INIT, GUI INIT (Runs every time character spawns)
+    │   ├── CharacterInit.lua
+    │   └── GuiInit.lua
+    └── StarterPlayerScripts/        -- PLAYER INIT (Runs once when player joins)
+        ├── PlayerInit.lua           -- Master client entry point
+        ├── Services/                -- Client-side modules (e.g., UI_Management.lua)
+        └── Systems/                 -- Client-side gameplay logic
+```
 
 ### 🔧 UI & Logic Guidelines
 *   **Polish:** GUI interfaces should contain tweens and sound effects to make the game look and feel "good."
@@ -372,9 +403,9 @@ Use `WaitForChild` in local scripts. On the server, whether to use `WaitForChild
 
 ### ⚡ Performance
 *   **Object Pooling:** Use object pooling for frequently created/destroyed elements.
-*   **Connection Cleanup:** Implement proper cleanup for all event connections.
-*   **Data Caching:** Cache frequently accessed data.
-*   **Heartbeat Optimization:** Use heartbeat connections sparingly.
+*   **Connection Cleanup:** Implement proper cleanup in all event connections.
+*   **Caching:** Cache frequently accessed data.
+*   **Heartbeat:** Use heartbeat connections sparingly.
 
 ### 🛡️ Security
 *   **Server Validation:** Always validate data on the server.
@@ -387,4 +418,3 @@ Use `WaitForChild` in local scripts. On the server, whether to use `WaitForChild
 *   **Consistent Timing:** Use consistent animation timing.
 *   **Error Handling:** Implement proper error handling with user-friendly messages.
 *   **Accessibility:** Support both mobile and desktop interfaces.
-```
