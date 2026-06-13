@@ -53,10 +53,10 @@ local function tryUserOwnsGamePassAsync(retry, player)
 				local success, owns = pcall(MarketplaceService.UserOwnsGamePassAsync, MarketplaceService, player.UserId, passId)
 				if success then
 					if owns then grantPassReward(player, passId) end
-					return
+					break
 				else
-					warn("Error checking Pass " .. passId .. ": " .. tostring(owns))
-					task.wait(2)
+					warn("Gamepass check failed: " .. tostring(owns)) -- 'owns' holds the error message here
+					task.wait(1)
 				end
 			end
 	end
@@ -116,13 +116,20 @@ MarketplaceService.ProcessReceipt = processReceipt
 
 
 
-
-MonotizationService._Init = function(player)
-	task.spawn(function() 
-		tryUserOwnsGamePassAsync(5, player) 
-	end)
+--serverinit
+MonotizationService._Init = function()
 	MarketplaceService.PromptGamePassPurchaseFinished:Connect(function(player, id, success)
 		if success then grantPassReward(player, id) end
 	end)
 end
+-- player init
+MonotizationService._init = function(player) 
+	task.spawn(function() 
+		tryUserOwnsGamePassAsync(5, player) 
+	end)
+end
+
+
+
+
 return MonotizationService
