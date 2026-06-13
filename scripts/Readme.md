@@ -50,7 +50,7 @@ Data that needs to be displayed on a Global Leaderboard (like Wins or Highest St
 1. **Initialization:** `ServerInit` loads all 3 data types from the DataStores.
 2. **Assignment:** It assigns the loaded data to Attributes (for standard stats and string-based item lists) and to the `leaderstats` folder. 
 3. **Validation:** It flags the data as successfully loaded (`_G.DataLoaded`). Only then does it allow the physical character to spawn.
-4. **Modification:** Throughout gameplay, use `StateService` to change these stats safely (it handles multipliers automatically). Use `GetAttribute()` and `.Changed` on leaderstats to allow other scripts to react to data changes.
+4. **Modification:** Throughout gameplay, use `StatesService` to change these stats safely (it handles multipliers automatically). Use `GetAttribute()` and `.Changed` on leaderstats to allow other scripts to react to data changes.
     * **Note:** Since our robust data system ensures all data is loaded before the character spawns, if data is somehow not found when queried by another script, we should simply `return` to abort the operation instead of setting it to `0`. 
     
     *For example:*
