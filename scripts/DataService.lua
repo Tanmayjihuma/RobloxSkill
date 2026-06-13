@@ -1,6 +1,6 @@
--- Help load player data and save player data safily (only for tables for now)
+-- Help load player data and save player data safely (only for tables for now)
 
--- yieling functions 
+-- yielding functions 
 local DataService = {}
 local DataStoreService = game:GetService("DataStoreService")
 local RETRY_DELAY = 2
