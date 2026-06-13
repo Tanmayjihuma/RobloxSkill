@@ -88,8 +88,8 @@ end
 RespawnHandler.Init = function(player, SpawnLocation)
 
 	player.CharacterAdded:Connect(function(character)
-		local humanoid = character:WaitForChild("Humanoid", 10)
-		local root = character:WaitForChild("HumanoidRootPart", 10)
+		local humanoid = character:WaitForChild("Humanoid")
+		local root = character:WaitForChild("HumanoidRootPart")
 
 		local isDead = false 
 
