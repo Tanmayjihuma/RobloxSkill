@@ -106,7 +106,7 @@ Players.PlayerAdded:Connect(function(player)
 		_G.DataLoaded[player.UserId .. "LEADERSTATS_LOADED"] = true
 
 		-- 11. Initializing monetization, respawn, and other services
-		MonotizationService._init(player)
+		MonotizationService.Init(player)
 
 		RespawnHandler.Init(player, SpawnPart)
 		RespawnHandler.SpawnPlayer(player, SpawnPart)
