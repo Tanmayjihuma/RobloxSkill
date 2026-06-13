@@ -322,7 +322,7 @@ Player.CharacterAdded:Connect(OnCharacterAdded)
 Player.CharacterRemoving:Connect(function(character: Model)
     -- some stuff on character removal if needed
 end)
-
+```
 ---
 
 ## 📂 Advanced Features & Recommended File Structure
