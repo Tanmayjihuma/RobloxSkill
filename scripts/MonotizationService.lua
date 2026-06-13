@@ -15,10 +15,10 @@ local PROD_IDS = Config.DeveloperProducts
 -- GAMEPASS LOGIC (Permanent Unlocks)
 -- ==========================================
 local function grantPassReward(player, passId)
-	-- this part is just for understandins cuz different games need different types of data
+	-- this part is just for understanding cuz different games need different types of data
 	-- THIS IS EXAMPLE PART
 	if passId == PASS_IDS["EXAMPLE_DoubleMoney"] then 
-		player:SetAttribute("DoubleMoney", true) -- so we can use in playerStatsService
+		player:SetAttribute("DoubleMoney", true) -- so we can use in StatesService
 	elseif passId == PASS_IDS["EXAMPLE_VIP_ITEM"] then
 		-- use player stats service to update the items string list
 	end
@@ -28,7 +28,7 @@ end
 -- DEVELOPER PRODUCT LOGIC (Consumables)
 -- ==========================================
 local productHandlers = {
-	-- this part is just for understanding cuz diffrent game need different types of data
+	-- this part is just for understanding cuz different game need different types of data
 	[PROD_IDS["EXAMPLE_MONEY_AMOUNT"]]  = function(p) StatesService. UpdateStatsFromAttribute(p, 100, false, true , 1 , "EXAMPLE_MONEY") return true end,
 
 	[PROD_IDS["EXAMPLE_OTHERSTUFF"]] = function(p)
