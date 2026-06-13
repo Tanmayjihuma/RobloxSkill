@@ -8,8 +8,8 @@ local ProximityPromptService = game:GetService("ProximityPromptService")
 local Player = Players.LocalPlayer
 
 -- Yield until scripts are available (good practice for client scripts)
-local Systems = StarterPlayer:WaitForChild("Systems")
-local Services = StarterPlayer:WaitForChild("Services")
+local Systems = StarterPlayer:WaitForChild("LocalSystems")
+local Services = StarterPlayer:WaitForChild("LocalServices")
 
 -- Assuming these exist in your game structure (FOR EXAMPLE)
 	local GameSystem = require(Systems:WaitForChild("GameSystem"))
