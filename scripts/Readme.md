@@ -200,9 +200,9 @@ Data that needs to be displayed on a Global Leaderboard (like Wins or Highest St
 
 ### 📜 Naming & Workflow Conventions
 Before examining the initialization scripts, note our standardized naming convention for initialization functions:
-- **`_Init`**: Primary server-side initialization logic that runs **outside** of the `PlayerAdded` event (global startup for server script).
-- **`init`**: Player-specific initialization logic that runs **inside** of the `PlayerAdded` event. (for server script)
-- **`_init`**: Client-side initialization logic residing within **StarterPlayer** scripts. (for local scripts)
+- **`_Init`**: Primary server-side initialization logic that runs **outside** of the `PlayerAdded` event (global startup).
+- **`init`**: Player-specific initialization logic that runs **inside** of the `PlayerAdded` event.
+- **`_init`**: Client-side initialization logic residing within **StarterPlayer** scripts.
 
 ### 9. ServerInit
 **Location:** `ServerScriptService`
@@ -246,9 +246,7 @@ Players.CharacterAutoLoads = false
 
 -- 8. Confirming onClientEvent loaded
 GuiLoadedRemote.OnServerEvent:Connect(function(player: Player, data: any)
-   	if data == "CLIENTEVENTNAME_1" or data == "CLIENTEVENTNAME_2" or data == "CLIENTEVENTNAME_3" then
-		player:SetAttribute(data, true)
-	end
+    -- Validate and flag client readiness
 end)
 
 -- 9. On Player Added
@@ -322,6 +320,71 @@ Player.CharacterAdded:Connect(OnCharacterAdded)
 
 -- 4. Cleanup on death/removal
 Player.CharacterRemoving:Connect(function(character: Model)
-    -- Destroy specific UI elements or reset visual effects
+    -- some stuff on character removal if needed
 end)
+
+---
+
+## 📂 Advanced Features & Recommended File Structure
+
+### 🏗️ File Structure
+Use `WaitForChild` in local scripts. On the server, whether to use `WaitForChild` depends on the condition (e.g., if objects are created dynamically while playing or after map loading).
+
+**ReplicatedStorage/**
+*   `Config/`: Stores default data tables (e.g., `DefaultData.lua`).
+*   `Assets/`:
+    *   `Remotes/`: All RemoteEvents and RemoteFunctions.
+    *   `Models/`: Shared models.
+    *   `VFX/SFX/`: Visual and sound effects (if large or server-dependent, store in `ServerStorage`).
+*   `SharedScripts/`: Modules used by both server and client.
+*   `Classes/`: OOP class definitions (if needed).
+
+**ServerScriptService/**
+*   `ServerInit.server.lua`: Master entry point.
+*   `Services/`: Modular server-side logic.
+*   `Systems/`: Higher-level gameplay systems.
+
+**StarterGui/**
+*   `ClientMain.client.lua`: Main UI controller.
+
+**ServerStorage/**
+*   `Models/`: Server-only models.
+*   `Musics/`: Audio assets.
+*   `TRASH/`: To store old or unused systems for reference.
+
+**StarterPlayer/**
+*   **StarterCharacterScripts**:
+    *   `CharacterInit`: Character-specific initialization.
+    *   `GuiInit`: Local UI setup.
+*   **StarterPlayerScripts**:
+    *   `PlayerInit`: Global client initialization.
+    *   `Services/`: Client-side modules.
+    *   `Systems/`: Client-side gameplay logic.
+
+### 🔧 UI & Logic Guidelines
+*   **Polish:** GUI interfaces should contain tweens and sound effects to make the game look and feel "good."
+*   **Control:** UI should mostly be controlled by `StarterCharacter` scripts rather than `StarterPlayer` scripts.
+*   **Race Conditions:** Ensure there are no race conditions. Specifically, pay attention to `OnClientEvent` race conditions (as mentioned in the `ServerInit` architecture).
+
+---
+
+## 🛠️ Best Practices
+
+### ⚡ Performance
+*   **Object Pooling:** Use object pooling for frequently created/destroyed elements.
+*   **Connection Cleanup:** Implement proper cleanup for all event connections.
+*   **Data Caching:** Cache frequently accessed data.
+*   **Heartbeat Optimization:** Use heartbeat connections sparingly.
+
+### 🛡️ Security
+*   **Server Validation:** Always validate data on the server.
+*   **Rate Limiting:** Use rate limiting for all remote events.
+*   **Trust No One:** Never trust client-sent data.
+*   **Anti-Exploit:** Implement proper anti-exploit measures.
+
+### 🎨 User Experience
+*   **Visual Feedback:** Provide visual feedback for all interactions.
+*   **Consistent Timing:** Use consistent animation timing.
+*   **Error Handling:** Implement proper error handling with user-friendly messages.
+*   **Accessibility:** Support both mobile and desktop interfaces.
 ```
