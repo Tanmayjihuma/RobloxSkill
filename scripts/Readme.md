@@ -337,7 +337,7 @@ end)
 -- 1. Loading basic things and services
 local Players: Players = game:GetService("Players")
 local Player: Player = Players.LocalPlayer
--- Yield for required client folders (e.g., WaitForChild("Services", 5))
+-- Yield for required client folders (e.g., WaitForChild("Services"))
 
 -- 2. Basic models init
 -- Example: MyLocalService._init()
