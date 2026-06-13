@@ -11,7 +11,7 @@ local Systems = ServerScriptService:WaitForChild("Systems")
 
 -- Require core services
 local AutoDataSavingService = require(Services:WaitForChild("DataManager"):WaitForChild("AutoDataSavingService"))
-local MonotizationService = require(Services:WaitForChild("MonetizationService"))
+local MonetizationService = require(Services:WaitForChild("MonetizationService"))
 local DataService = require(Services:WaitForChild("DataManager"):WaitForChild("DataService"))
 --local LeaderstatsService = require(Services:WaitForChild("LeaderstatsService"))
 local OrdinaryDataService = require(Services:WaitForChild("DataManager"):WaitForChild("OrdinaryDataService"))
@@ -62,7 +62,7 @@ end
 --SafeInit("MusicService", function()
 	--MusicService._Init()
 --end)
-MonotizationService._Init()
+MonetizationService._Init()
 -- Example GlobalLeaderboard init code
 -- SafeInit("WinLeaderboard", function()
 -- 	OrdinaryDataService.startGlobalLeaderboard("LEADERSTATS_DATA_WIN", 2, 20, Win_Global_Leaderstate, 250, 50, "Top Wins")
@@ -105,7 +105,7 @@ Players.PlayerAdded:Connect(function(player)
 		_G.DataLoaded[player.UserId .. "LEADERSTATS_LOADED"] = true
 
 		-- 11. Initializing monetization, respawn, and other services
-		MonotizationService.Init(player)
+		MonetizationService.Init(player)
 
 		RespawnHandler.Init(player, SpawnPart)
 		RespawnHandler.SpawnPlayer(player, SpawnPart)
