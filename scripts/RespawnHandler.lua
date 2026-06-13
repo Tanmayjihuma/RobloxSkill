@@ -5,7 +5,7 @@ local RESPAWN_DELAY = 1.25
 local NumberUtils = require(game.ReplicatedStorage.SharedScripts.NumberUtils)
 
 
--- createOveeheadUi(EXAMPLE) only if needed  ask 
+-- createOverheadUI(EXAMPLE) only if needed  ask 
 local function createOverheadUI(player, character)
 	local head = character:WaitForChild("Head")
 	-- local Leaderstats = player:WaitForChild("leaderstats")
