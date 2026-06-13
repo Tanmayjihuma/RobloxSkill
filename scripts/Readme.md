@@ -122,7 +122,7 @@ Data that needs to be displayed on a Global Leaderboard (like Wins or Highest St
             ```lua
             MonotizationService.tryUserOwnsGamePassAsync(3, player: Player)
             ```
-
+* **Contains playerAddedInit and Serverinit**
 ### 4. NumberUtils
 *   **Location:** `ReplicatedStorage > SharedScripts > NumberUtils.lua`
 *   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/NumberUtils.lua)
@@ -241,9 +241,9 @@ Data that needs to be displayed on a Global Leaderboard (like Wins or Highest St
 
 ### 📜 Naming & Workflow Conventions
 Before examining the initialization scripts, note our standardized naming convention for initialization functions:
-- **`_Init`**: Primary server-side initialization logic that runs **outside** of the `PlayerAdded` event (global startup).
-- **`init`**: Player-specific initialization logic that runs **inside** of the `PlayerAdded` event.
-- **`_init`**: Client-side initialization logic residing within **StarterPlayer** scripts.
+- **`_Init`**: Primary server-side initialization logic that runs **outside** of the `PlayerAdded` event (global startup for serverscript).
+- **`Init`**: Player-specific initialization logic that runs **inside** of the `PlayerAdded` event (for server script).
+- **`_init`**: Client-side initialization logic residing within **StarterPlayer** scripts (for local script).
 
 ### 9. ServerInit
 *   **Location:** `ServerScriptService > ServerInit.lua`
@@ -285,7 +285,7 @@ Players.CharacterAutoLoads = false
 
 -- 7. Server _Init (Initializing main functions safely via pcall wrappers)
 -- Example: SafeInit("MySystem", function() MySystem._Init() end)
-
+MonotizationService._Init()
 -- 8. Confirming onClientEvent loaded
 GuiLoadedRemote.OnServerEvent:Connect(function(player: Player, data: any)
     -- Validate and flag client readiness
@@ -296,6 +296,8 @@ Players.PlayerAdded:Connect(function(player: Player)
     -- 10. Player init (Loading data via DataService)
     -- 10.5. Ensuring data is loaded flag (_G.DataLoaded[id] = true)
     -- 11. Initializing monetization, respawn, and other services
+    MonotizationService.Init()
+    RespawnHandler.Init()
     -- 12. Character conditions / CharacterAdded logic
 end)
 
