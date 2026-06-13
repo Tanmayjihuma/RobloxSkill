@@ -11,7 +11,7 @@ local Systems = ServerScriptService:WaitForChild("Systems")
 
 -- Require core services
 local AutoDataSavingService = require(Services:WaitForChild("DataManager"):WaitForChild("AutoDataSavingService"))
-local MonotizationService = require(Services:WaitForChild("MonotizationService"))
+local MonotizationService = require(Services:WaitForChild("MonetizationService"))
 local DataService = require(Services:WaitForChild("DataManager"):WaitForChild("DataService"))
 --local LeaderstatsService = require(Services:WaitForChild("LeaderstatsService"))
 local OrdinaryDataService = require(Services:WaitForChild("DataManager"):WaitForChild("OrdinaryDataService"))
