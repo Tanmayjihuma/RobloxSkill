@@ -379,8 +379,8 @@ Use `WaitForChild` in local scripts. On the server, whether to use `WaitForChild
 Root/
 ├── ReplicatedStorage/
 │   ├── Config/
-│   │   └── DefaultData.lua          -- Default player stats & configs
-│   │   └── Gamepasses.lua
+│   │   ├── DefaultData.lua          -- Default player stats & configs
+│   │   ├── Gamepasses.lua
 │   │   └── DeveloperProducts.lua          
 │   ├── Assets/
 │   │   ├── Remotes/                 -- All RemoteEvents & Functions
@@ -415,7 +415,7 @@ Root/
     │   ├── CharacterInit.lua
     │   └── GuiInit.lua
     ├── StarterPlayerScripts/        -- PLAYER INIT (Runs once when player joins)
-    │   ├── PlayerInit.lua           -- Master client entry point
+    │   └── PlayerInit.lua           -- Master client entry point
     ├── LocalServices/                -- Client-side modules (e.g., UI_Management.lua)
     └── LocalSystems/                 -- Client-side gameplay logic
 ```
