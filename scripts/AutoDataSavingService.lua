@@ -42,8 +42,8 @@ end
 AutoDataSavingService.SaveItemsData = function(player)
 	if _G.DataLoaded[player.UserId.."ITEMS_DATA_LOADED"] then
 		local dataToSave = {
-			Chair = player:GetAttribute("EXAMPLE_ITEMS") ,
-			Death = player:GetAttribute("EXAMPLE_EFFECTS") ,
+			ITEM_1 = player:GetAttribute("ITEM_1") ,
+			ITEM_2 = player:GetAttribute("ITEM_2") ,
 		}
 		DataService.savePlayerData("PlayeritemsData", 5, false, true, player, dataToSave)
 	end
