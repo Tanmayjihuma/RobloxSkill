@@ -71,7 +71,7 @@ RespawnHandler.SpawnPlayer = function(player, SpawnLocation)
 	local root = character:WaitForChild("HumanoidRootPart")
 
 	if root and SpawnLocation then
-		-- ADD SOME SPECIAL FUNTIONS FOR EXAMPLE :-
+		-- ADD SOME SPECIAL FUNCTIONS FOR EXAMPLE :-
 		--createOverheadUI(player, character) 
 		root.Anchored = true 
 		root.CFrame = SpawnLocation.CFrame + Vector3.new(0, 5, 0)
