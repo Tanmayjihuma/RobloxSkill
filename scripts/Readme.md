@@ -111,9 +111,9 @@ Data that needs to be displayed on a Global Leaderboard (like Wins or Highest St
             DataService.savePlayerData("MyDataStore", 3, false, true, player, {MyStat1 = 10})
             ```
 
-### 3. MonotizationService
-*   **Location:** `ServerScriptService > Services > MonotizationService.lua`
-*   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/MonotizationService.lua)
+### 3. MonetizationService
+*   **Location:** `ServerScriptService > Services > MonetizationService.lua`
+*   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/MonetizationService.lua)
 *   **File Overview:** Centralizes all Marketplace logic. Handles the verification of GamePass ownership and processes Developer Product purchases idempotently.
 *   **Functions:**
     *   `_Init() , Init(player)`
@@ -284,7 +284,7 @@ Players.CharacterAutoLoads = false
 
 -- 7. Server _Init (Initializing main functions safely via pcall wrappers)
 -- Example: SafeInit("MySystem", function() MySystem._Init() end)
-MonotizationService._Init()
+MonetizationService._Init()
 -- 8. Confirming onClientEvent loaded
 GuiLoadedRemote.OnServerEvent:Connect(function(player: Player, data: any)
     -- Validate and flag client readiness
@@ -295,7 +295,7 @@ Players.PlayerAdded:Connect(function(player: Player)
     -- 10. Player init (Loading data via DataService)
     -- 10.5. Ensuring data is loaded flag (_G.DataLoaded[id] = true)
     -- 11. Initializing monetization, respawn, and other services
-    MonotizationService.Init()
+    MonetizationService.Init()
     RespawnHandler.Init()
     -- 12. Character conditions / CharacterAdded logic
 end)
@@ -397,7 +397,7 @@ Root/
 │   │   │   ├── DataService.lua
 │   │   │   ├── AutoDataSavingService.lua
 │   │   │   └── OrdinaryDataService.lua
-│   │   ├── MonotizationService.lua
+│   │   ├── MonetizationService.lua
 │   │   └── StatesService.lua        -- Player stats & multipliers
 │   └── Systems/                     -- server side gameplay systems
 │       └── RespawnHandler.lua       -- RESPAWN HANDLER
