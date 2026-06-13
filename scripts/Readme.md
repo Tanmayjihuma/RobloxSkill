@@ -14,28 +14,33 @@ We solve this by feeding defaults from `ReplicatedStorage.Config.DefaultData` an
 ### 1. Attribute Data (Standard Stats)
 We load a table of standard stats (like levels, experience, or standard flags) and immediately assign them as Attributes on the player. Because our `AutoDataSavingService` dynamically reads the `DefaultData` config, any attribute listed there is automatically extracted from the player and safely saved. This ensures data is never lost.
 
-### 2. Items Data (String-Based Arrays)
-Because **Roblox Attributes cannot store tables**, we store player inventories and owned items as comma-separated strings (e.g., `"item1,item2,item3"`). 
+### 2. Items Data (String-Based Arrays & Stacks)
+Because **Roblox Attributes cannot store tables**, we store player inventories and owned items as comma-separated strings. We support **Stackable Items** using the `ItemName(Count)` format (e.g., `"Sword,Potion(5),Wood(10)"`).
 
-We use `StatesService` to manage these strings safely. This ensures whole-word matching (so searching for `"Sword"` doesn't accidentally find `"GoldenSword"`) and prevents formatting errors.
+We use `StatesService` to manage these strings safely.
 
-*Recommended Usage (via PlayerStateService):*
+*Recommended Usage (via StatesService):*
 ```lua
-local StatesService = require(game.ServerScriptService.Services.PlayerStateService)
+local StatesService = require(game.ServerScriptService.Services.StatesService)
 
--- 1. Adding an item (Handles duplicates automatically)
-PlayerStateService.AddItem(player, "MyOwnedItems", "SuperSword")
+-- 1. Adding an item 
+-- Arguments: (player, attributeName, itemName, isStackable)
+StatesService.AddItem(player, "Inventory", "Wood", true) -- Becomes "Wood(1)"
+StatesService.AddItem(player, "Inventory", "Wood", true) -- Becomes "Wood(2)"
 
--- 2. Checking if player owns an item
-if PlayerStateService.HasItem(player, "MyOwnedItems", "SuperSword") then
-    print("Player has the sword!")
+-- 2. Checking ownership (Works for both stacked and normal items)
+if StatesService.HasItem(player, "Inventory", "Wood") then
+    local count = StatesService.GetStackAmount(player, "Inventory", "Wood")
+    print("Player has " .. count .. " Wood")
 end
 
 -- 3. Removing an item
-PlayerStateService.RemoveItem(player, "MyOwnedItems", "SuperSword")
+-- Arguments: (player, attributeName, itemName, isStackable, removeAll)
+StatesService.RemoveItem(player, "Inventory", "Wood", true, false) -- Becomes "Wood(1)"
+StatesService.RemoveItem(player, "Inventory", "Wood", true, true)  -- Removes entirely
 
--- 4. Counting items
-local total = PlayerStateService.CountItems(player, "MyOwnedItems")
+-- 4. Counting Unique Entries
+local totalEntries = StatesService.CountUniqueItems(player, "Inventory")
 ```
 
 ### 3. Leaderstat Data (Ordered Data)
@@ -154,23 +159,33 @@ Data that needs to be displayed on a Global Leaderboard (like Wins or Highest St
             OrdinaryDataService.startGlobalLeaderboard("MyGlobalStat", 2, 20, workspace.MyBoard, 120, 30, "Top Stats")
             ```
 
-### 6. PlayerStateService (StatesService)
+### 6. StatesService (StatesService)
 *   **Location:** `ServerScriptService > Services > StatesService.lua`
 *   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/StatesService.lua)
-*   **File Overview:** A centralized controller for modifying player statistics. It intercepts state changes to apply active multipliers (like VIP or Gamepasses).
+*   **File Overview:** A centralized controller for modifying player statistics and managing item inventories. It intercepts state changes to apply active multipliers and handles stackable string-based item data.
 *   **Functions:**
-    *   `Update_Stats_FROM_ATTRUBUTE(player: Player, amount: number, reset: boolean, isRbxReward: boolean, initMultiplayer: number, statName: string)`
-        *   **Features:** Modifies a specific attribute. Automatically searches for a corresponding "Double" attribute (e.g., `DoubleYourStat`) and applies multipliers before saving the value.
+    *   `UpdateStatsFromAttribute(player, amount, reset, isRbxReward, initMultiplayer, statName)`
+        *   **Features:** Modifies a specific attribute. Automatically searches for a corresponding "Double" attribute (e.g., `DoubleCash`) and applies multipliers.
         *   **Example Usage:**
             ```lua
-            PlayerStateService.Update_Stats_FROM_ATTRUBUTE(player, 50, false, false, 1, "MyAttribute")
+            StatesService.UpdateStatsFromAttribute(player, 50, false, false, 1, "Cash")
             ```
-    *   `Update_Stats_FROM_LeaderStats(player: Player, amount: number, reset: boolean, isRbxReward: boolean, initMultiplayer: number, statName: string)`
+    *   `UpdateStatsFromLeaderStats(player, amount, reset, isRbxReward, initMultiplayer, statName)`
         *   **Features:** Functions identically to the attribute updater but modifies a physical `ValueBase` object inside the player's `leaderstats` folder.
         *   **Example Usage:**
             ```lua
-            PlayerStateService.Update_Stats_FROM_LeaderStats(player, 1, false, false, 1, "MyLeaderstat")
+            StatesService.UpdateStatsFromLeaderStats(player, 1, false, false, 1, "Wins")
             ```
+    *   `AddItem(player, attributeName, itemName, isStackable)`
+        *   **Features:** Adds an item or increments its stack if `isStackable` is true.
+    *   `RemoveItem(player, attributeName, itemName, isStackable, removeAll)`
+        *   **Features:** Decrements a stack or removes an item entirely.
+    *   `HasItem(player, attributeName, itemName)`
+        *   **Features:** Returns true if the player owns the item.
+    *   `GetStackAmount(player, attributeName, itemName)`
+        *   **Features:** Returns the current count of a specific item.
+    *   `CountUniqueItems(player, attributeName)`
+        *   **Features:** Returns total number of unique item entries.
 
 ### 7. RespawnHandler
 *   **Location:** `ServerScriptService > Systems > RespawnHandler.lua`
