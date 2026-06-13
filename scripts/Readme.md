@@ -12,20 +12,30 @@ Before diving into individual scripts, it is crucial to understand how data move
 We solve this by feeding defaults from `ReplicatedStorage.Config.DefaultData` and splitting our data into three distinct extraction types:
 
 ### 1. Attribute Data (Standard Stats)
-We load a table of standard stats (like TutorialCompleted, TotalTimePlayedToday, or standard flags) and immediately assign them as Attributes on the player. Because our `AutoDataSavingService` dynamically reads the `DefaultData` config, any attribute listed there is automatically extracted from the player and safely saved. This ensures data is never lost.
+We load a table of standard stats (like levels, experience, or standard flags) and immediately assign them as Attributes on the player. Because our `AutoDataSavingService` dynamically reads the `DefaultData` config, any attribute listed there is automatically extracted from the player and safely saved. This ensures data is never lost.
 
 ### 2. Items Data (String-Based Arrays)
-Because **Roblox Attributes cannot store tables**, we store player inventories and owned items as comma-separated strings (e.g., `"item1,item2,item3"`). This data is loaded from its own specific DataStore name, separate from standard attributes, and saved by manually packaging the strings back into a table in the saving service.
+Because **Roblox Attributes cannot store tables**, we store player inventories and owned items as comma-separated strings (e.g., `"item1,item2,item3"`). 
 
-*Generic Example of safely finding and updating an item string:*
+We use `StatesService` to manage these strings safely. This ensures whole-word matching (so searching for `"Sword"` doesn't accidentally find `"GoldenSword"`) and prevents formatting errors.
+
+*Recommended Usage (via PlayerStateService):*
 ```lua
-local owned: string? = player:GetAttribute("MyOwnedItems")
-if not owned then return end -- Prevent data loss if data hasn't loaded yet!
+local StatesService = require(game.ServerScriptService.Services.PlayerStateService)
 
--- Check if the player already owns the item to prevent duplicates
-if not string.find(owned, "NewItemName") then
-    player:SetAttribute("MyOwnedItems", owned .. ",NewItemName")
+-- 1. Adding an item (Handles duplicates automatically)
+PlayerStateService.AddItem(player, "MyOwnedItems", "SuperSword")
+
+-- 2. Checking if player owns an item
+if PlayerStateService.HasItem(player, "MyOwnedItems", "SuperSword") then
+    print("Player has the sword!")
 end
+
+-- 3. Removing an item
+PlayerStateService.RemoveItem(player, "MyOwnedItems", "SuperSword")
+
+-- 4. Counting items
+local total = PlayerStateService.CountItems(player, "MyOwnedItems")
 ```
 
 ### 3. Leaderstat Data (Ordered Data)
@@ -264,9 +274,6 @@ Players.CharacterAutoLoads = false
 -- 8. Confirming onClientEvent loaded
 GuiLoadedRemote.OnServerEvent:Connect(function(player: Player, data: any)
     -- Validate and flag client readiness
-    if data == "CLIENTEVENTNAME_1" or data == "CLIENTEVENTNAME_2" or data == "CLIENTEVENTNAME_3" then
-		player:SetAttribute(data, true)
-	end
 end)
 
 -- 9. On Player Added
@@ -389,10 +396,10 @@ Root/
     ├── StarterCharacterScripts/     -- CHARACTER INIT, GUI INIT (Runs every time character spawns)
     │   ├── CharacterInit.lua
     │   └── GuiInit.lua
-    ├── StarterPlayerScripts/        -- PLAYER INIT (Runs once when player joins)
-	│    └── PlayerInit.lua           -- Master client entry point
-	├── Services/                -- Client-side modules (e.g., UI_Management.lua)
-	└── Systems/                 -- Client-side gameplay logic
+    └── StarterPlayerScripts/        -- PLAYER INIT (Runs once when player joins)
+        ├── PlayerInit.lua           -- Master client entry point
+        ├── Services/                -- Client-side modules (e.g., UI_Management.lua)
+        └── Systems/                 -- Client-side gameplay logic
 ```
 
 ### 🔧 UI & Logic Guidelines
