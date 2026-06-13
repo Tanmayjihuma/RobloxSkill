@@ -63,7 +63,7 @@ mon
 SafeInit("MusicService", function()
 	MusicService._Init()
 end)
-MonotizationService._Init(player)
+MonotizationService._Init()
 -- Example GlobalLeaderboard init code
 -- SafeInit("WinLeaderboard", function()
 -- 	OrdinaryDataService.startGlobalLeaderboard("LEADERSTATS_DATA_WIN", 2, 20, Win_Global_Leaderstate, 250, 50, "Top Wins")
