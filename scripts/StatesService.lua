@@ -3,14 +3,14 @@
 
 local StatesService = {}
 
-StatesService.UpdateStatsFromAttribute = function(player, amount, reset, isRbxReward, initMultiplayer, statName)
+StatesService.UpdateStatsFromAttribute = function(player, amount, reset, isRbxReward, initMultiplier, statName)
 	if not player or not amount or not player.Parent then return end
 	
 	-- We rename the parameter to `statName` to avoid confusing it with the actual numerical value.
 	local currentStatValue = player:GetAttribute(statName)
 	
 	if currentStatValue ~= nil then
-		amount *= (initMultiplayer or 1) -- Safeguard in case initMultiplayer is nil
+		amount *= (initMultiplier or 1) -- Safeguard in case initMultiplayer is nil
 		
 		if amount > 0 and not isRbxReward then
 			-- Correct Multiplier Logic: Initialize to 1 FIRST.
@@ -33,7 +33,7 @@ StatesService.UpdateStatsFromAttribute = function(player, amount, reset, isRbxRe
 	end
 end
 
-StatesService.UpdateStatsFromLeaderStats = function(player, amount, reset, isRbxReward, initMultiplayer, statName)
+StatesService.UpdateStatsFromLeaderStats = function(player, amount, reset, isRbxReward, initMultiplier, statName)
 	if not player or not amount or not player.Parent then return end
 	
 	local leaderstats = player:FindFirstChild("leaderstats")
@@ -42,7 +42,7 @@ StatesService.UpdateStatsFromLeaderStats = function(player, amount, reset, isRbx
 		local statObject = leaderstats:FindFirstChild(statName)
 		
 		if statObject then
-			amount *= (initMultiplayer or 1)
+			amount *= (initMultiplier or 1)
 			
 			if amount > 0 and not isRbxReward then
 				local multiplier = 1
