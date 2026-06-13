@@ -10,7 +10,7 @@ local Config = ReplicatedStorage:WaitForChild("Config")
 local DefaultData = require(Config:WaitForChild("DefaultData"))
 local AutoDataSavingService = {}
 -- we need different for leaderstate cuz we use ordinary data store service that stores numbers not values 
-local DATA_TYPE_EXAMPLE_LEADERSTATE_1= "LEADERSTATS_EXAMPLE_1"
+local DATA_TYPE_EXAMPLE_LEADERSTATE_1 = "LEADERSTATS_EXAMPLE_1"
 local DATA_TYPE_EXAMPLE_LEADERSTATE_2 = "LEADERSTATS_EXAMPLE_2"
 
 AutoDataSavingService.SaveLeaderstatsData = function(player)
