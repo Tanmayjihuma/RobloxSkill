@@ -122,8 +122,8 @@ MonotizationService._Init = function()
 		if success then grantPassReward(player, id) end
 	end)
 end
--- player init
-MonotizationService._init = function(player) 
+-- player added init
+MonotizationService.Init = function(player) 
 	task.spawn(function() 
 		tryUserOwnsGamePassAsync(5, player) 
 	end)
