@@ -15,7 +15,7 @@ local DATA_TYPE_EXAMPLE_LEADERSTATE_2 = "LEADERSTATS_EXAMPLE_2"
 
 AutoDataSavingService.SaveLeaderstatsData = function(player)
 	
-	if _G.DataLoaded[player.UserId.."LEADERSTATS_DATA_LOADED"] then
+	if _G.DataLoaded[player.UserId.."LEADERSTATS_LOADED"] then
 		local EXAMPLE_DATA_1 = player.leaderstats.EXAMPLE_DATA_1.Value
 		local EXAMPLE_DATA_2 = player.leaderstats.EXAMPLE_DATA_2.Value
 		OrdinaryDataService.savePlayerData(DATA_TYPE_EXAMPLE_LEADERSTATE_1 , 6, false , true , player , EXAMPLE_DATA_1)
