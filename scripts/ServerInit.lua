@@ -58,7 +58,6 @@ local function SafeInit(moduleName, initFunction)
 end
 -- the core gameplay function not need safeInit or task.spawn
 -- GameSystem1._Init()
-mon
 -- SafeInit("GameSystem2", function() GameSystem2._Init() end)
 --SafeInit("MusicService", function()
 	--MusicService._Init()
