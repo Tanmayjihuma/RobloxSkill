@@ -10,11 +10,11 @@ local Services = ServerScriptService:WaitForChild("Services")
 local Systems = ServerScriptService:WaitForChild("Systems")
 
 -- Require core services
-local AutoDataSavingService = require(Services:WaitForChild("DataService"):WaitForChild("AutoDataSavingService"))
+local AutoDataSavingService = require(Services:WaitForChild("DataManager"):WaitForChild("AutoDataSavingService"))
 local MonotizationService = require(Services:WaitForChild("MonotizationService"))
-local DataService = require(Services:WaitForChild("DataService"))
+local DataService = require(Services:WaitForChild("DataManager"):WaitForChild("DataService"))
 local LeaderstatsService = require(Services:WaitForChild("LeaderstatsService"))
-local OrdinaryDataService = require(Services:WaitForChild("DataService"):WaitForChild("OrdinaryDataService"))
+local OrdinaryDataService = require(Services:WaitForChild("DataManager"):WaitForChild("OrdinaryDataService"))
 local MusicService = require(Services:WaitForChild("MusicService"))
 
 -- 2. (IMP) Remote that confirms race condition onClientEvent or important script stuff loaded
