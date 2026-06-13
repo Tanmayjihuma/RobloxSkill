@@ -2,7 +2,7 @@
 local RespawnHandler = {}
 local Players = game:GetService("Players")
 local RESPAWN_DELAY = 1.25
-local NumberUtils = require(game.ReplicatedStorage.Services.NumberUtils)
+local NumberUtils = require(game.ReplicatedStorage.SharedScripts.NumberUtils)
 local REMOTES = game:GetService("ReplicatedStorage"):WaitForChild("Assets"):WaitForChild("Remotes")
 local ReviveRemote = REMOTES:WaitForChild("ReviveRemote")
 
