@@ -116,13 +116,12 @@ Data that needs to be displayed on a Global Leaderboard (like Wins or Highest St
 *   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/MonotizationService.lua)
 *   **File Overview:** Centralizes all Marketplace logic. Handles the verification of GamePass ownership and processes Developer Product purchases idempotently.
 *   **Functions:**
-    *   `tryUserOwnsGamePassAsync(retry: number, player: Player)`
+    *   `_Init() , Init(player)`
         *   **Features:** Checks GamePass ownership asynchronously with network retry safety. If owned, triggers the internal reward granting logic.
         *   **Example Usage:**
             ```lua
-            MonotizationService.tryUserOwnsGamePassAsync(3, player: Player)
+            _Init() , Init(player)
             ```
-* **Contains playerAddedInit and Serverinit**
 ### 4. NumberUtils
 *   **Location:** `ReplicatedStorage > SharedScripts > NumberUtils.lua`
 *   **Source:** [View Code](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/NumberUtils.lua)
