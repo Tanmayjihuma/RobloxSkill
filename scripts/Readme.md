@@ -169,7 +169,7 @@ Data that needs to be displayed on a Global Leaderboard (like Wins or Highest St
             ```lua
             StatesService.UpdateStatsFromAttribute(player, 50, false, false, 1, "Cash")
             ```
-    *   `UpdateStatsFromLeaderStats(player, amount, reset, isRbxReward, initMultiplayer, statName)`
+    *   `UpdateStatsFromLeaderStats(player, amount, reset, isRbxReward, initMultiplier, statName)`
         *   **Features:** Functions identically to the attribute updater but modifies a physical `ValueBase` object inside the player's `leaderstats` folder.
         *   **Example Usage:**
             ```lua
