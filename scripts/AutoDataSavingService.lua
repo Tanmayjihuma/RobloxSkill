@@ -1,5 +1,5 @@
 
--- also we store data in 2 format after loading , attributes and this system here is already perfect
+-- also we store data in 2 format after loading , attributes and this system here is allready perfect
 -- second is leaderboard , items list attributes
 
 
