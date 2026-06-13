@@ -10,7 +10,7 @@ StatesService.UpdateStatsFromAttribute = function(player, amount, reset, isRbxRe
 	local currentStatValue = player:GetAttribute(statName)
 	
 	if currentStatValue ~= nil then
-		amount *= (initMultiplier or 1) -- Safeguard in case initMultiplayer is nil
+		amount *= (initMultiplier or 1) -- Safeguard in case initMultiplier is nil
 		
 		if amount > 0 and not isRbxReward then
 			-- Correct Multiplier Logic: Initialize to 1 FIRST.
