@@ -1,5 +1,5 @@
 
--- also we store data in 2 format after loading , attributes and this system here is allready perfect
+-- also we store data in 2 format after loading , attributes and this system here is already perfect
 -- second is leaderboard , items list attributes
 
 
@@ -9,7 +9,7 @@ local OrdinaryDataService = require(game.ServerScriptService.Services.DataManage
 local Config = ReplicatedStorage:WaitForChild("Config")
 local DefaultData = require(Config:WaitForChild("DefaultData"))
 local AutoDataSavingService = {}
--- we need different for leaderstate cuz we use ordianrary data store service that stores numbers not values 
+-- we need different for leaderstate cuz we use ordinary data store service that stores numbers not values 
 local DATA_TYPE_EXAMPLE_LEADERSTATE_1= "LEADERSTATS_EXAMPLE_1"
 local DATA_TYPE_EXAMPLE_LEADERSTATE_2 = "LEADERSTATS_EXAMPLE_2"
 
@@ -29,7 +29,7 @@ AutoDataSavingService.SaveAttributesData= function(player)
 	local dataToSave = {}
 	for attributeName, _ in pairs(DefaultData.Attributes) do
 		local currentValue = player:GetAttribute(attributeName)
-		-- this is to prevent data loss in attributes when player join and leaver before its data is loaded
+		-- this is to prevent data loss in attributes when player join and leaves before its data is loaded
 		if currentValue ~= nil then
 			dataToSave[attributeName] = currentValue
 		end
