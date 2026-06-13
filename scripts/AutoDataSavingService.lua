@@ -5,7 +5,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataService = require(game.ServerScriptService.Services.DataService)
-local OrdinaryDataService = require(game.ServerScriptService.Services.DataService.OrdinaryDataService)
+local OrdinaryDataService = require(game.ServerScriptService.Services.DataManager.OrdinaryDataService)
 local Config = ReplicatedStorage:WaitForChild("Config")
 local DefaultData = require(Config:WaitForChild("DefaultData"))
 local AutoDataSavingService = {}
