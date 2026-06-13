@@ -44,7 +44,7 @@ _G.DataLoaded = {}
 Players.CharacterAutoLoads = false
 
 -- ==========================================
--- 7. Server _Init (Initing main functions)
+-- 7. Server _Init (Initializing main functions)
 -- ==========================================
 
 -- Helper function to safely init modules without crashing the main thread
@@ -82,7 +82,7 @@ end)
 -- 9. On Player Added
 -- ==========================================
 Players.PlayerAdded:Connect(function(player)
-	-- 10. Player init (Loading data , seting item data , assing base and leaderstate if any)
+	-- 10. Player init (Loading data , setting item data , assigning base and leaderstate if any)
 	local AttributeData =
 		DataService.loadPlayerData("PlayerAttributeData", 5, true, player, DefaultData.Attributes, true)
 	local ItemsData =
