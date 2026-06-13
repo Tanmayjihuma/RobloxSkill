@@ -9,7 +9,6 @@ local OrdinaryDataService = require(game.ServerScriptService.Services.DataManage
 local Config = ReplicatedStorage:WaitForChild("Config")
 local DefaultData = require(Config:WaitForChild("DefaultData"))
 local AutoDataSavingService = {}
-local DATA_TYPE_EXAMPLE_ATTRIBUTE = "ATTRIBUTE_EXAMPLE"
 -- we need different for leaderstate cuz we use ordianrary data store service that stores numbers not values 
 local DATA_TYPE_EXAMPLE_LEADERSTATE_1= "LEADERSTATS_EXAMPLE_1"
 local DATA_TYPE_EXAMPLE_LEADERSTATE_2 = "LEADERSTATS_EXAMPLE_2"
@@ -36,7 +35,7 @@ AutoDataSavingService.SaveAttributesData= function(player)
 		end
 	end
 
-	DataService.savePlayerData(DATA_TYPE_EXAMPLE_ATTRIBUTE, 4, false, true, player, dataToSave)
+	DataService.savePlayerData("PlayerAttributeData", 4, false, true, player, dataToSave)
 end
 
 -- FOR ITEMS OR OTHER DATA (WHEN DATA need contains table we save it like "t1,t2,t2" in attribute)
