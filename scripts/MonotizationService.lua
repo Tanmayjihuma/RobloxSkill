@@ -20,13 +20,7 @@ local function grantPassReward(player, passId)
 	if passId == PASS_IDS["EXAMPLE_DoubleMoney"] then 
 		player:SetAttribute("DoubleMoney", true) -- so we can use in playerStatsService
 	elseif passId == PASS_IDS["EXAMPLE_VIP_ITEM"] then
-		player:SetAttribute("VIP_ITEM", true) -- SO WE CAN USE IN OTHER SCRIPT 
-		local owned = player:GetAttribute("EXAMPLE_Owned_ITEMS") 
-		if not owned then return end -- Always return when data not found to prevent data loss
-		--FOR EXAMPLE 
-		if not string.find(owned, "EXAMPLE_Owned_ITEMS") then
-			player:SetAttribute("EXAMPLE_Owned_ITEMS", owned .. ",VIP_ITEMS")
-		end
+		-- use player stats service to update the items string list
 	end
 end
 
@@ -35,7 +29,7 @@ end
 -- ==========================================
 local productHandlers = {
 	-- this part is just for understanding cuz diffrent game need different types of data
-	[PROD_IDS["EXAMPLE_MONEY_AMOUNT"]]  = function(p) StateService.UpdateCash(p, AMOUNT, false, true) return true end,
+	[PROD_IDS["EXAMPLE_MONEY_AMOUNT"]]  = function(p) StateService. UpdateStatsFromAttribute(p, 100, false, true , 0 , "EXAMPLE_MONEY") return true end,
 
 	[PROD_IDS["EXAMPLE_OTHERSTUFF"]] = function(p)
 		--OTHER STUFF CODE
