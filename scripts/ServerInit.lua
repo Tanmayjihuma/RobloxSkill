@@ -13,9 +13,9 @@ local Systems = ServerScriptService:WaitForChild("Systems")
 local AutoDataSavingService = require(Services:WaitForChild("DataManager"):WaitForChild("AutoDataSavingService"))
 local MonotizationService = require(Services:WaitForChild("MonotizationService"))
 local DataService = require(Services:WaitForChild("DataManager"):WaitForChild("DataService"))
-local LeaderstatsService = require(Services:WaitForChild("LeaderstatsService"))
+--local LeaderstatsService = require(Services:WaitForChild("LeaderstatsService"))
 local OrdinaryDataService = require(Services:WaitForChild("DataManager"):WaitForChild("OrdinaryDataService"))
-local MusicService = require(Services:WaitForChild("MusicService"))
+--local MusicService = require(Services:WaitForChild("MusicService"))
 
 -- 2. (IMP) Remote that confirms race condition onClientEvent or important script stuff loaded
 local GuiLoadedRemote = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Remotes"):WaitForChild("OnClientEventLoaded")
@@ -60,9 +60,9 @@ end
 -- GameSystem1._Init()
 mon
 -- SafeInit("GameSystem2", function() GameSystem2._Init() end)
-SafeInit("MusicService", function()
-	MusicService._Init()
-end)
+--SafeInit("MusicService", function()
+	--MusicService._Init()
+--end)
 MonotizationService._Init()
 -- Example GlobalLeaderboard init code
 -- SafeInit("WinLeaderboard", function()
