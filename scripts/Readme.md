@@ -389,10 +389,10 @@ Root/
     ├── StarterCharacterScripts/     -- CHARACTER INIT, GUI INIT (Runs every time character spawns)
     │   ├── CharacterInit.lua
     │   └── GuiInit.lua
-    └── StarterPlayerScripts/        -- PLAYER INIT (Runs once when player joins)
-        ├── PlayerInit.lua           -- Master client entry point
-        ├── Services/                -- Client-side modules (e.g., UI_Management.lua)
-        └── Systems/                 -- Client-side gameplay logic
+    ├── StarterPlayerScripts/        -- PLAYER INIT (Runs once when player joins)
+	│    └── PlayerInit.lua           -- Master client entry point
+	├── Services/                -- Client-side modules (e.g., UI_Management.lua)
+	└── Systems/                 -- Client-side gameplay logic
 ```
 
 ### 🔧 UI & Logic Guidelines
