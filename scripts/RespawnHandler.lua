@@ -32,8 +32,7 @@ local function createOverheadUI(player, character)
 	listLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	listLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 	listLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
-	listLayout.Padding = UDim.new(0, 5) -- Negative padding pulls them closer together!
-
+	listLayout.Padding = UDim.new(0, 5) 
 	-- ==========================================
 	-- PLAYER NAME SETUP (Bottom)
 	-- ==========================================
