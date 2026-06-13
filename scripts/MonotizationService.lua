@@ -29,7 +29,7 @@ end
 -- ==========================================
 local productHandlers = {
 	-- this part is just for understanding cuz different game need different types of data
-	[PROD_IDS["EXAMPLE_MONEY_AMOUNT"]]  = function(p) StatesService. UpdateStatsFromAttribute(p, 100, false, true , 1 , "EXAMPLE_MONEY") return true end,
+	[PROD_IDS["EXAMPLE_MONEY_AMOUNT"]]  = function(p) StatesService.UpdateStatsFromAttribute(p, 100, false, true , 1 , "EXAMPLE_MONEY") return true end,
 
 	[PROD_IDS["EXAMPLE_OTHERSTUFF"]] = function(p)
 		--OTHER STUFF CODE
