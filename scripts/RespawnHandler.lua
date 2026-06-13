@@ -8,7 +8,6 @@ local NumberUtils = require(game.ReplicatedStorage.SharedScripts.NumberUtils)
 -- createOveeheadUi(EXAMPLE) only if needed  ask 
 local function createOverheadUI(player, character)
 	local head = character:WaitForChild("Head")
-	local Streak
 	local Leaderstats = player:WaitForChild("leaderstats" , 5)
 	if Leaderstats then
 		Streak = Leaderstats:WaitForChild("Streak" , 5)
