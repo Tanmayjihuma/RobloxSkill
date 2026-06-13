@@ -21,7 +21,7 @@ AutoDataSavingService.SaveLeaderstatsData = function(player)
 		OrdinaryDataService.savePlayerData(DATA_TYPE_EXAMPLE_LEADERSTATE_1 , 6, false , true , player , EXAMPLE_DATA_1)
 		OrdinaryDataService.savePlayerData(DATA_TYPE_EXAMPLE_LEADERSTATE_2 , 6, false , true , player , EXAMPLE_DATA_2)
 		
-		_G.DataLoaded[player.UserId.."LEADERSTATS_DATA_LOADED"] = nil
+		_G.DataLoaded[player.UserId.."LEADERSTATS_LOADED"] = nil
 	end
 end 
 
