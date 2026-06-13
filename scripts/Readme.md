@@ -380,6 +380,8 @@ Root/
 ├── ReplicatedStorage/
 │   ├── Config/
 │   │   └── DefaultData.lua          -- Default player stats & configs
+│   │   └── Gamepasses.lua
+│   │   └── DeveloperProducts.lua          
 │   ├── Assets/
 │   │   ├── Remotes/                 -- All RemoteEvents & Functions
 │   │   ├── Models/                  -- Shared 3D models
@@ -414,8 +416,8 @@ Root/
     │   └── GuiInit.lua
     ├── StarterPlayerScripts/        -- PLAYER INIT (Runs once when player joins)
     │   ├── PlayerInit.lua           -- Master client entry point
-    ├── Services/                -- Client-side modules (e.g., UI_Management.lua)
-    └── Systems/                 -- Client-side gameplay logic
+    ├── LocalServices/                -- Client-side modules (e.g., UI_Management.lua)
+    └── LocalSystems/                 -- Client-side gameplay logic
 ```
 
 ### 🔧 UI & Logic Guidelines
