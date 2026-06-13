@@ -28,7 +28,7 @@ local hasInitializedOnce = false
 
 -- Runs every single time the player respawns
 local function RunEveryTimeCharacterLoads(character)
-	-- CAN BE PUT IN RESPAWN HANDLER BUT ITS DEPENDS 
+	-- CAN BE PUT IN RESPAWN HANDLER BUT IT DEPENDS
 	-- YOUR CODE
 end
 
@@ -57,5 +57,5 @@ Player.CharacterAdded:Connect(OnCharacterAdded)
 
 -- 4. Cleanup on death/removal
 Player.CharacterRemoving:Connect(function(character)
-	-- SOME CLEARNING ,PLAYER REMOVING STUFF 
+	-- SOME CLEANING ,PLAYER REMOVING STUFF 
 end)
