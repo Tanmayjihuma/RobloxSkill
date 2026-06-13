@@ -190,6 +190,7 @@ task.spawn(function()
 		for _, player in pairs(Players:GetPlayers()) do
 			task.spawn(function()
 				SaveAllPlayerData(player)
+				task.wait(1)
 			end)
 		end
 	end
