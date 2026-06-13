@@ -5,7 +5,7 @@ local Players = game:GetService("Players")
 local DataStoreService = game:GetService("DataStoreService")
 local purchaseHistory = DataStoreService:GetDataStore("PurchaseHistory")
 
-local Config = require(game.ReplicatedStorage.Config.IDs)
+local Config = require(game.ReplicatedStorage.Config)
 local StatesService = require(game.ServerScriptService.Services.StatesService)
 
 local PASS_IDS = Config.Gamepasses
