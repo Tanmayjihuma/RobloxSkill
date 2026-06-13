@@ -6,7 +6,7 @@ local DataStoreService = game:GetService("DataStoreService")
 local purchaseHistory = DataStoreService:GetDataStore("PurchaseHistory")
 
 local Config = require(game.ReplicatedStorage.Config.IDs)
-local StateService = require(game.ServerScriptService.Services.StatesService)
+local StatesService = require(game.ServerScriptService.Services.StatesService)
 
 local PASS_IDS = Config.Gamepasses
 local PROD_IDS = Config.DeveloperProducts
@@ -29,7 +29,7 @@ end
 -- ==========================================
 local productHandlers = {
 	-- this part is just for understanding cuz diffrent game need different types of data
-	[PROD_IDS["EXAMPLE_MONEY_AMOUNT"]]  = function(p) StateService. UpdateStatsFromAttribute(p, 100, false, true , 1 , "EXAMPLE_MONEY") return true end,
+	[PROD_IDS["EXAMPLE_MONEY_AMOUNT"]]  = function(p) StatesService. UpdateStatsFromAttribute(p, 100, false, true , 1 , "EXAMPLE_MONEY") return true end,
 
 	[PROD_IDS["EXAMPLE_OTHERSTUFF"]] = function(p)
 		--OTHER STUFF CODE
