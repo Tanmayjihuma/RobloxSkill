@@ -3,8 +3,7 @@ local RespawnHandler = {}
 local Players = game:GetService("Players")
 local RESPAWN_DELAY = 1.25
 local NumberUtils = require(game.ReplicatedStorage.SharedScripts.NumberUtils)
-local REMOTES = game:GetService("ReplicatedStorage"):WaitForChild("Assets"):WaitForChild("Remotes")
-local ReviveRemote = REMOTES:WaitForChild("ReviveRemote")
+
 
 -- createOveeheadUi(EXAMPLE) only if needed  ask 
 local function createOverheadUI(player, character)
@@ -81,7 +80,6 @@ RespawnHandler.SpawnPlayer = function(player, SpawnLocation)
 		root.CFrame = SpawnLocation.CFrame + Vector3.new(0, 5, 0)
 		task.wait(0.2)
 		root.Anchored = false
-		ReviveRemote:FireClient(player, {Action = "PromptReviveStreak"} , DateTime.now().UnixTimestamp)
 
 	else
 		warn("⚠️ Assigned spawn for " .. player.Name .. " is missing a 'SpawnPoint' part!")
