@@ -18,8 +18,7 @@ local OrdinaryDataService = require(Services:WaitForChild("DataService"):WaitFor
 local MusicService = require(Services:WaitForChild("MusicService"))
 
 -- 2. (IMP) Remote that confirms race condition onClientEvent or important script stuff loaded
-local GuiLoadedRemote =
-	ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Remotes"):WaitForChild("OnClientEventLoaded")
+local GuiLoadedRemote = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Remotes"):WaitForChild("OnClientEventLoaded")
 
 -- 3. Defining required Modules
 local Config = ReplicatedStorage:WaitForChild("Config")
@@ -59,12 +58,12 @@ local function SafeInit(moduleName, initFunction)
 end
 -- the core gameplay function not need safeInit or task.spawn
 -- GameSystem1._Init()
-
+mon
 -- SafeInit("GameSystem2", function() GameSystem2._Init() end)
 SafeInit("MusicService", function()
 	MusicService._Init()
 end)
-
+MonotizationService._Init(player)
 -- Example GlobalLeaderboard init code
 -- SafeInit("WinLeaderboard", function()
 -- 	OrdinaryDataService.startGlobalLeaderboard("LEADERSTATS_DATA_WIN", 2, 20, Win_Global_Leaderstate, 250, 50, "Top Wins")
@@ -107,7 +106,7 @@ Players.PlayerAdded:Connect(function(player)
 		_G.DataLoaded[player.UserId .. "LEADERSTATS_LOADED"] = true
 
 		-- 11. Initializing monetization, respawn, and other services
-		MonotizationService._Init(player)
+		MonotizationService._init(player)
 
 		RespawnHandler.Init(player, SpawnPart)
 		RespawnHandler.SpawnPlayer(player, SpawnPart)
