@@ -213,25 +213,25 @@ Data that needs to be displayed on a Global Leaderboard (like Wins or Highest St
         *   **Features:** Updates the visual theme of the UI dynamically.
         *   **Example Usage:**
             ```lua
-            UI_Management.SetTheme("Dark")
+            UI_Management:SetTheme("Dark")
             ```
     *   `ShowScreen(name: string, animation: string)` & `HideScreen(...)`
-        *   **Features:** Toggles UI panel visibility with predefined tween animations (e.g., Fade, Slide, Scale).
+        *   **Features:** Toggles UI panel visibility with predefined tween animations (e.g., FadeIn, SlideDown, ScaleOut).
         *   **Example Usage:**
             ```lua
-            UI_Management.ShowScreen("ShopPanel", "Fade")
+            UI_Management:ShowScreen("ShopPanel", "Fade")
             ```
     *   `ShowNotification(text: string, duration: number, notificationType: string)`
         *   **Features:** Displays a temporary pop-up toast notification to the user.
         *   **Example Usage:**
             ```lua
-            UI_Management.ShowNotification("Purchase Successful!", 3, "Success")
+            UI_Management:ShowNotification("Purchase Successful!", 3, "Success")
             ```
     *   `AnimateElement(element: GuiObject, animation: string, callback: () -> ())`
         *   **Features:** Helper to apply specific `TweenService` effects to UI elements.
         *   **Example Usage:**
             ```lua
-            UI_Management.AnimateElement(myButton, "Bounce")
+            UI_Management:AnimateElement(myButton, "Bounce")
             ```
 
 ---
