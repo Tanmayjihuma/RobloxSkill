@@ -149,10 +149,10 @@ function UIManager:ShowNotification(text, duration, notificationType)
     table.insert(notifications, notification)
     
     -- Slide in animation
-    self:AnimateElement(notification, "slideIn", function()
+    self:AnimateElement(notification, "slideDown", function()
         wait(duration)
         -- Slide out animation
-        self:AnimateElement(notification, "slideOut", function()
+        self:AnimateElement(notification, "slideUp", function()
             notification:Destroy()
             -- Remove from notifications list
             for i, notif in ipairs(notifications) do
