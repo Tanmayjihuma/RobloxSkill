@@ -25,7 +25,7 @@ Curated collection of free and premium assets organized by category:
 - **Character Assets** - Accessories, clothing, and animations
 - **Game-Specific Assets** - Themed collections for different genres
 
-Includes batch loading utilities and organization best practices.
+Includes batch loading utilities and organization best practices (in models like weapon etc its advices to create own weapons according to game).
 
 ### 🐛 [Debugging Guide](debugging_guide.md)
 Comprehensive debugging and troubleshooting reference:
