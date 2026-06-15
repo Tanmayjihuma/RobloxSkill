@@ -15,7 +15,7 @@ Ready-to-use game templates with complete systems and mechanics:
 - **Puzzle Game** - Logic-based challenges with hint systems
 - **Casino/Gambling** - Virtual currency and game variety
 
-Each template includes starter code, configuration files, and implementation guides.
+Each template includes starter code, configuration files, and implementation guides basics.
 
 ### 🎨 [Asset Library](asset_library.md)
 Curated collection of free and premium assets organized by category:
