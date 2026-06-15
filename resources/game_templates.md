@@ -371,8 +371,8 @@ Select the template that matches your game vision.
 ### 2. Core Setup
 ```lua
 -- ServerScriptService/GameSetup.lua
-local GameManager = require(ReplicatedStorage.Scripts.GameManager)
-local DataManager = require(ReplicatedStorage.Scripts.DataManager)
+local GameManager = require(ServerScriptService.Systems.GameManager)
+local DataManager = require(ServerScriptService.Services.DataService)
 
 -- Initialize with template config
 GameManager:Initialize()
