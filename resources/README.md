@@ -63,72 +63,52 @@ Perfect for quick lookup during development.
 
 ---
 
-## 🚀 Quick Start Guide
-
-### 1. Choose Your Project Type
-Browse the [Game Templates](game_templates.md) to find a starting point that matches your vision:
-- New to Roblox? Start with **Platformer** or **Tycoon**
-- Want multiplayer? Try **Battle Royale** or **Racing Game**
-- Building creative tools? Check out **Building/Creative**
-- Making an RPG? Use the **RPG Adventure** template
-
-### 2. Set Up Core Systems
-Use the helper scripts from the main script library:
-```lua
--- ServerScriptService/Main.server.lua
-local DataManager = require(ReplicatedStorage.Scripts.DataManager)
-local GameManager = require(script.GameManager)
-local RemoteManager = require(ReplicatedStorage.Scripts.RemoteManager)
-
--- Initialize core systems
-DataManager:Initialize()
-RemoteManager:CreateCommonRemotes()
-GameManager:Initialize()
-```
-
-### 3. Add Assets and Content
-Reference the [Asset Library](asset_library.md) for:
-- Sound effects and music tracks
-- 3D models and textures
-- UI elements and particles
-- Vehicle and weapon models
-
-### 4. Optimize Performance
-Follow the [Performance Optimization](performance_optimization.md) guide:
-- Set up performance monitoring
-- Implement object pooling for frequent objects
-- Use LOD systems for complex models
-- Optimize network traffic with batching
-
-### 5. Debug and Polish
-Use the [Debugging Guide](debugging_guide.md) tools:
-- Set up error logging and monitoring
-- Create debug console commands
-- Profile performance-critical code
-- Test on multiple device types
-
----
-
-## 💡 Development Tips
-
 ### Project Organization
 ```
-ReplicatedStorage/
-├── Scripts/           # Shared utility scripts
-├── Assets/           # Models, sounds, textures
-├── RemoteEvents/     # Client-server communication
-└── Configuration/    # Game settings and data
-
-ServerScriptService/
-├── GameLogic/        # Server-side game systems
-├── DataHandling/     # Player data and persistence
-└── Security/         # Anti-exploit and validation
-
-StarterGui/
-├── UI/               # User interface scripts
-├── ClientLogic/      # Client-side game code
-└── Controllers/      # Input and camera handling
+Root/
+├── ReplicatedStorage/
+│   ├── Config/
+│   │   ├── DefaultData.lua          -- Default player stats & configs
+│   │   ├── Gamepasses.lua
+│   │   └── DeveloperProducts.lua          
+│   ├── Assets/
+│   │   ├── Remotes/                 -- All RemoteEvents & Functions
+│   │   ├── Models/                  -- Shared 3D models
+│   │   └── VFX_SFX/                 -- Visual/Sound effects (Shared)
+│   ├── SharedScripts/
+│   │   └── NumberUtils.lua          -- EX: Utilities used by both Server/Client
+│   └── Classes/                     -- OOP class definitions (if needed)
+│
+├── ServerScriptService/
+│   ├── ServerInit.lua               -- Master server entry point
+│   ├── Services/                    -- Modular server-side logic
+│   │   ├── DataManager/             -- DATASERVICE.LUA, AUTODATASAVINGSERVICE.LUA, ORDINARY DATA SAVING SERVICE
+│   │   │   ├── DataService.lua
+│   │   │   ├── AutoDataSavingService.lua
+│   │   │   └── OrdinaryDataService.lua
+│   │   ├── MonetizationService.lua
+│   │   └── StatesService.lua        -- Player stats & multipliers
+│   └── Systems/                     -- server side gameplay systems
+│       └── RespawnHandler.lua       -- RESPAWN HANDLER
+│
+├── ServerStorage/
+│   ├── Models/                      -- Server-only assets
+│   ├── Musics/                      -- Audio assets
+│   └── TRASH/                       -- Archive of legacy systems (TO STORE OLD SYSTEMS THAT WAS NOT USEFULL)
+│
+├── StarterGui/
+│   └── ClientMain.client.lua        -- Main UI controller logic
+│
+└── StarterPlayer/
+    ├── StarterCharacterScripts/     -- CHARACTER INIT, GUI INIT (Runs every time character spawns)
+    │   ├── CharacterInit.lua
+    │   └── GuiInit.lua
+    ├── StarterPlayerScripts/        -- PLAYER INIT (Runs once when player joins)
+    │   └── PlayerInit.lua           -- Master client entry point
+    ├── LocalServices/                -- Client-side modules (e.g., UI_Management.lua)
+    └── LocalSystems/                 -- Client-side gameplay logic
 ```
+ ** these all service is provided at this - [Link](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/README.md) **
 
 ### Code Style Guidelines
 - Use **PascalCase** for modules and classes
@@ -153,28 +133,6 @@ StarterGui/
 - **Implement proper authentication** for admin features
 - **Log suspicious activity** for monitoring
 - **Use secure patterns** for anti-exploit protection
-
----
-
-## 📚 Learning Path
-
-### Beginner (New to Roblox)
-1. Start with **Quick Reference** for basic syntax
-2. Use **Platformer Template** for first game
-3. Follow **Debugging Guide** for common issues
-4. Implement basic **Asset Library** sounds/models
-
-### Intermediate (Some Roblox Experience)  
-1. Try **Tycoon** or **Racing Game** templates
-2. Implement **Performance Optimization** techniques
-3. Build custom systems using helper scripts
-4. Create original assets and integrate them
-
-### Advanced (Experienced Developer)
-1. Customize **Battle Royale** or **RPG** templates
-2. Build complex multiplayer systems
-3. Implement advanced optimization techniques
-4. Contribute back to the community
 
 ---
 
@@ -224,67 +182,14 @@ AssetLoader:LoadModel(CUSTOM_ASSETS.models.customWeapon, workspace)
 
 ---
 
-## 🤝 Contributing
 
-### Reporting Issues
-If you find bugs or have suggestions:
-1. Check existing issues first
-2. Provide clear reproduction steps
-3. Include error messages and screenshots
-4. Specify device type and Roblox version
-
-### Adding Resources
-To contribute new templates or assets:
-1. Follow the existing organization patterns
-2. Include comprehensive documentation
-3. Add usage examples and screenshots
-4. Test on multiple devices
-
-### Code Improvements
-When submitting code improvements:
-1. Follow the established code style
-2. Add appropriate comments and documentation
-3. Include performance benchmarks if relevant
-4. Test thoroughly before submission
-
----
-
-## 📄 License & Credits
-
-### Usage Rights
-- All code examples are free to use in your Roblox games
-- Attribution appreciated but not required
-- Modify and extend as needed for your projects
-
-### Asset Credits
-- Free assets sourced from Roblox catalog
-- Some assets may require creator attribution
-- Premium assets require proper licensing
-- Always verify asset usage rights before publishing
-
-### Community
-- Built by developers, for developers
-- Contributions welcome from all skill levels
-- Share your improvements and extensions
-- Help others learn and grow
-
----
-
-## 🔗 Additional Resources
+## 🔗 Additional Resources (container huge documentation of roblox )
 
 ### Official Roblox Documentation
 - [Roblox Developer Hub](https://developer.roblox.com/)
-- [Luau Language Guide](https://luau-lang.org/)
-- [Roblox Studio Tutorials](https://developer.roblox.com/en-us/learn-roblox/studio)
-
-### Community Resources
-- [Roblox Developer Forum](https://devforum.roblox.com/)
-- [Roblox Discord Communities](https://discord.gg/roblox)
-- [YouTube Developer Channels](https://www.youtube.com/results?search_query=roblox+development)
 
 ### Advanced Topics
 - [Game Design Principles](https://developer.roblox.com/en-us/articles/game-design-principles)
 - [Monetization Strategies](https://developer.roblox.com/en-us/articles/developer-products)
 - [Analytics and Metrics](https://developer.roblox.com/en-us/articles/analytics)
 
-This resource collection provides everything you need to build successful Roblox games efficiently and professionally!
