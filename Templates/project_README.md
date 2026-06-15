@@ -52,22 +52,48 @@
 
 ### Project Structure
 ```
-ProjectName/
-├── ServerScriptService/
-│   ├── GameLogic/          # Core game systems
-│   ├── DataManagement/     # Player data handling
-│   ├── Security/           # Anti-cheat systems
-│   └── API/                # External integrations
+Root/
 ├── ReplicatedStorage/
-│   ├── Modules/            # Shared utility modules
-│   ├── Assets/             # Models, sounds, textures
-│   ├── RemoteEvents/       # Client-server communication
-│   └── Configuration/      # Game settings
+│   ├── Config/
+│   │   ├── DefaultData.lua          -- Default player stats & configs
+│   │   ├── Gamepasses.lua
+│   │   └── DeveloperProducts.lua          
+│   ├── Assets/
+│   │   ├── Remotes/                 -- All RemoteEvents & Functions
+│   │   ├── Models/                  -- Shared 3D models
+│   │   └── VFX_SFX/                 -- Visual/Sound effects (Shared)
+│   ├── SharedScripts/
+│   │   └── NumberUtils.lua          -- EX: Utilities used by both Server/Client
+│   └── Classes/                     -- OOP class definitions (if needed)
+│
+├── ServerScriptService/
+│   ├── ServerInit.lua               -- Master server entry point
+│   ├── Services/                    -- Modular server-side logic
+│   │   ├── DataManager/             -- DATASERVICE.LUA, AUTODATASAVINGSERVICE.LUA, ORDINARY DATA SAVING SERVICE
+│   │   │   ├── DataService.lua
+│   │   │   ├── AutoDataSavingService.lua
+│   │   │   └── OrdinaryDataService.lua
+│   │   ├── MonetizationService.lua
+│   │   └── StatesService.lua        -- Player stats & multipliers
+│   └── Systems/                     -- server side gameplay systems
+│       └── RespawnHandler.lua       -- RESPAWN HANDLER
+│
+├── ServerStorage/
+│   ├── Models/                      -- Server-only assets
+│   ├── Musics/                      -- Audio assets
+│   └── TRASH/                       -- Archive of legacy systems (TO STORE OLD SYSTEMS THAT WAS NOT USEFULL)
+│
 ├── StarterGui/
-│   ├── UI/                 # User interface systems
-│   ├── Controllers/        # Client-side controllers
-│   └── LocalScripts/       # Client-side logic
-├── StarterPack/            # Player tools and items
+│   └── ClientMain.client.lua        -- Main UI controller logic
+│
+├── StarterPlayer/
+│   ├── StarterCharacterScripts/     -- CHARACTER INIT, GUI INIT (Runs every time character spawns)
+│   │   ├── CharacterInit.lua
+│   │   └── GuiInit.lua
+│   ├── StarterPlayerScripts/        -- PLAYER INIT (Runs once when player joins)
+│   │   └── PlayerInit.lua           -- Master client entry point
+│   ├── LocalServices/                -- Client-side modules (e.g., UI_Management.lua)
+│   └── LocalSystems/                 -- Client-side gameplay logic
 └── Workspace/
     ├── Map/                # Game world geometry
     ├── Spawns/             # Player spawn locations
