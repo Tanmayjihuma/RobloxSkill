@@ -123,7 +123,7 @@ MonetizationService.Init = function(player)
 	end)
 end
 
-
+-- for avability like 2x speed , 2x jump related to character power up we may need add them in Character added
 
 
 return MonetizationService
