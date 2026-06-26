@@ -441,3 +441,25 @@ Beyond static tracks, `IKControl` instances allow for procedural adjustments (e.
 ## 9. **Testing And Debugging** 
 
 if u can test using MCP SERVER THEN DO it Find bugs , error , Memory Leak etc
+
+---
+---
+
+## **Rojo & External Sync
+**Note for AI:** This project uses Rojo to sync the local file system to Roblox Studio. When writing scripts or proposing new systems, you must respect the Rojo workflow.
+
+- **Strict Architecture Mapping:** Whenever you create a new script, you MUST define exactly where it lives in the local file system (e.g., `src/ServerScriptService/Services/NewService.lua`) so it syncs to the exact architecture defined in Section 1.
+- **Updating the JSON:** If you create a new root folder or restructure a system, you must provide the updated JSON snippet for `default.project.json`. 
+- **Mapping Cheat Sheet:**
+  - `ServerScriptService` → `src/ServerScriptService` (For `Services/`, `Systems/`, `ServerInit.lua`)
+  - `ReplicatedStorage` → `src/ReplicatedStorage` (For `SharedScripts/`, `Config/`, Remotes)
+  - `StarterPlayerScripts` → `src/StarterPlayer/StarterPlayerScripts` (For `LocalServices/`, `LocalSystems/`)
+  - `StarterCharacterScripts` → `src/StarterPlayer/StarterCharacterScripts`
+- **No Orphaned Code:** Never just output a `.lua` script in a vacuum. Always state its intended filepath so Rojo compiles it into the correct DataModel container. 
+- **Assets & UI:** Assume 3D Models, Audio (`ServerStorage/Musics`), and UI (`StarterGui/ClientMainGui`) are built natively in Studio unless explicitly told otherwise. Do not attempt to serialize complex UI or 3D models into the `default.project.json`.
+
+---
+
+
+
+
