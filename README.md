@@ -20,7 +20,7 @@ This skill includes a comprehensive collection of production-ready resources:
 
 ## **CORE CAPABILITIES** 
 
-## **LUAU PROGRAMMING** 
+### **LUAU PROGRAMMING** 
 
 - **Modern Luau Features** : Utilize type annotations, generics, the New Type Solver (general release), improved type inference/autocomplete, and performance optimizations 
 
@@ -28,9 +28,9 @@ This skill includes a comprehensive collection of production-ready resources:
 
 - **Performance Optimization** : Write efficient scripts that handle large player counts 
 
-**Error Handling** : Robust error management and debugging techniques 
+- **Error Handling** : Robust error management and debugging techniques 
 
-## **LUAU TYPE SYSTEM UPDATES** 
+### **LUAU TYPE SYSTEM UPDATES** 
 
 - **New Type Solver** : General release (no longer a Studio Beta); enabled by default for `nonstrict` and `nocheck` modes starting January 7, 2026 
 
@@ -52,7 +52,7 @@ local functionprocessPlayer(player: Player)
 end
 ```
 
-## **GENERAL MISTAKE TO AVOID** 
+### **GENERAL MISTAKE TO AVOID** 
 
 - **No Strict Typing:** Do not use type casting or the `!strict` mode in your 
 
@@ -88,7 +88,7 @@ Misusing it or forgetting to disconnect events can cause severe memory leaks and
 ---
 ## **DEVELOPMENT WORKFLOW** 
 ---
-1. **Architecture:** 
+## 1. **Architecture:** 
 
 ```
 Root/
@@ -142,14 +142,13 @@ Root/
 ## 2. **Data and Stats Management** 
 
 Roblox has specific engine limitations (e.g., Attributes cannot store Lua tables, and Global Leaderboards require single numbers via OrderedDataStore). 
-
 We solve this by feeding defaults from `ReplicatedStorage.Config.DefaultData` and splitting our data into three distinct extraction types: 
 
-## **1. Attribute Data (Standard Stats)** 
+### **1. Attribute Data (Standard Stats)** 
 
 We load a table of standard stats (like levels, experience, or standard flags) and immediately assign them as Attributes on the player. Because our [`AutoDataSavingService`](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/AutoDataSavingService.lua) dynamically reads the `DefaultData` config, any attribute listed there is automatically extracted from the player and safely saved. This ensures data is never lost. 
 
-## **2. Items Data (String-Based Arrays & Stacks)** 
+### **2. Items Data (String-Based Arrays & Stacks)** 
 
 Because Roblox Attributes cannot store tables, we store player inventories and owned items as comma-separated strings. 
 
@@ -163,7 +162,7 @@ Sword,Potion(5),Wood(10)
 
 We use [`StatesService`](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/StatesService.lua) to manage these strings safely. 
 
-## **RECOMMENDED USAGE (VIA STATESSERVICE)** 
+### **RECOMMENDED USAGE (VIA STATESSERVICE)** 
 
 ```
 local StatesService =
@@ -186,7 +185,7 @@ StatesService.RemoveItem(player,"Inventory","Wood",true,false)--
 Wood(1)
 ```
 ---
-## **3. Leaderstat Data (Ordered Data)** 
+### **3. Leaderstat Data (Ordered Data)** 
 
 Data that needs to appear on a Global Leaderboard (such as Wins, Kills, or Highest 
 
@@ -196,13 +195,13 @@ Instead, these values are stored separately using [`OrdinaryDataService`](https:
 
 When players join, these values are loaded and assigned directly to the appropriate `ValueBase` objects inside the player's `leaderstats` folder. 
 
-## **The Lifecycle Control (ServerInit Process)** 
+### **The Lifecycle Control (ServerInit Process)** 
 
-## **1. INITIALIZATION** 
+ ### **1. INITIALIZATION** 
 
 [`ServerInit`](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/ServerInit.lua) loads all three data types from their respective DataStores. 
 
-## **2. ASSIGNMENT** 
+ ### **2. ASSIGNMENT** 
 
 Loaded data is assigned to: 
 
@@ -214,7 +213,7 @@ Loaded data is assigned to:
 
 using [DataService](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/DataService.lua) and [OrdinaryDataService](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/OrdinaryDataService.lua)
 
-## **3. VALIDATION** 
+### **3. VALIDATION** 
 
 Once loading succeeds: 
 
@@ -224,7 +223,7 @@ _G.DataLoaded[player.UserId]=true
 
 Only after this validation step is the player's character allowed to spawn using Custom Respawn Handler. 
 
-## **4. MODIFICATION** 
+ ### **4. MODIFICATION** 
 
 Throughout gameplay, use `StatesService` to modify stats and inventory safely. 
 
@@ -242,7 +241,7 @@ leaderstats.Changed
 
 to react to data updates. 
 
-## **IMPORTANT NOTE** 
+### **IMPORTANT NOTE** 
 
 Since the framework guarantees data loads before character spawning, missing data should be treated as an error condition. 
 
@@ -267,14 +266,12 @@ Defaulting to `0` can accidentally overwrite or corrupt real player data if some
 
 unexpected occurs. 
 
-## **5. PERSISTENCE** 
+### **5. PERSISTENCE** 
 
 [`AutoDataSavingService`](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/AutoDataSavingService.lua) periodically scans the player and also runs when the 
 
 player leaves. 
-
 It extracts: 
-
 Live Attributes 
 
 - String-based item data 
@@ -285,43 +282,35 @@ The data is then packed and saved back into their respective DataStores
 
 automatically. 
 
-## **Summary** 
+### **Summary** 
 
 The framework separates player data into three categories: 
-
 1. Attributes → Standard player stats. 
-
 2. String-Based Item Data → Inventories and owned items. 
-
 3. Ordered Data → Global leaderboard values. 
-
 `ServerInit` loads and validates data before gameplay begins, while 
-
 `AutoDataSavingService` continuously handles persistence in the background, 
-
 ensuring reliable and safe data storage. 
-
 **Note:** When retrieving data via `leaderstats` or `GetAttribute` , **never fall back** 
-
 **to a default value** or 0 if it returns `nil` This can cause data loss. 
-
+---
 ## 3. **Networking** 
 
-## **DIFFERENT TYPES OF REMOTES** 
+### **DIFFERENT TYPES OF REMOTES** 
 
 |**Type**|**Direction**|**Returns value?**|**Use when**||
 |---|---|---|---|---|
-|`RemoteEvent`|Any<br>direction|No (fire-and-<br>forget)|Notifying server of player action,<br>broadcasting state||
-|`RemoteFunctio`<br>`n`|Client →<br>Server|Yes (yields caller)|Client needs a result back (e.g.<br>fetch inventory)||
-|`UnreliableRem`<br>`oteEvent`|Any<br>direction|No|High-frequency updates where<br>dropped packets are fine||
+|`RemoteEvent`|Any<br>direction|No (fire-and-<br>forget)|Notifying server of player action,<br>broadcasting state|
+|`RemoteFunction`<br>|Client →<br>Server|Yes (yields caller)|Client needs a result back (e.g.<br>fetch inventory)|
+|`UnreliableRemoteEvents`<br>|Any<br>direction|No|High-frequency updates where<br>dropped packets are fine|
 
 
 
-## **COMMON MISTAKES** 
+### **COMMON MISTAKES** 
 
 Create RemoteEvents/Functions manually in 
 
-## `ReplicatedStorage/Assets/Remotes` (Never create Remotes using 
+### `ReplicatedStorage/Assets/Remotes` (Never create Remotes using 
 
 - scripts) 
 
@@ -345,15 +334,12 @@ Create RemoteEvents/Functions manually in
 
 GUI by MCP server if possible) 
 
-- Make GUI with offset and at the Parent Frame of all the Frame add a UIAspectRatioConstraint now i use my plugin that convert the Offset Gui to Scale gui (make sure u told me to do that in output) and do not make ai slop 
-
-ui 
-
-## **Common mistake to avoid** 
+- Make GUI with offset and at the Parent Frame of all the Frame add a UIAspectRatioConstraint now i use my plugin that convert the Offset Gui to Scale gui (make sure u told me to do that in output) and do not make ai slop ui
+### **Common mistake to avoid** 
 
 its is not recommended creating GUI using scripts better give me command pannel script that create GUI if needed always put Gui handler script in Starter Character Script 
 
-## **Tips** 
+### **Tips** 
 
 Add Proper sound on Hover click , Tweens etc depends on how its look 
 
@@ -361,7 +347,7 @@ Use [Assets Resources](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/res
 ---
 ## 5. **Monotization Management** 
 
-## **Use Custom Service Monotization Service** [(view)](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/MonetizationService.lua)
+### **Use Custom Service Monotization Service** [(view)](https://github.com/Tanmayjihuma/RobloxSkill/blob/main/scripts/MonetizationService.lua)
 
 **Features:** `_Init() , Init(player)` ( **Use them in Server Init** ) **Features:** Checks GamePass ownership asynchronously with network retry safety. If owned, triggers the internal reward granting logic. 
 ---
@@ -375,7 +361,7 @@ existing instances rather than creating a lot of new ones for no reason. **Preve
 ---
 ## 7. **Animation Mangement** 
 
-## **Object References** 
+### **Object References** 
 
    - **`Animation` :** Asset container (holds the `AnimationId` ). **`Animator` :** The playback engine. Always lives inside a `Humanoid` 
 
@@ -391,7 +377,7 @@ existing instances rather than creating a lot of new ones for no reason. **Preve
 
 **NPC / Server Model:** `Script` (Server-side). The server owns the network authority. 
 
-## **Loading & Playing (Pro-Level Reference)** 
+### **Loading & Playing (Pro-Level Reference)** 
 
 _AI Pitfall: Always use_ _`Animator:LoadAnimation()` . Calling this_ 
 
@@ -415,21 +401,21 @@ track:GetMarkerReachedSignal("MarkerName"):Connect(function())
 ```
 (Perfect for syncing sounds/VFX). 
 
-## **Upper-Body Animations (not part of scripting)** 
+### **Upper-Body Animations (not part of scripting)** 
 
 There is no script to "mask" joints at runtime. If you want a player to reload a gun while running, the reload animation **must be** 
 
 **authored with the lower body unkeyed** in the Animation Editor. If legs are keyed, the reload animation will override the running animation, causing the player to slide across the floor. 
 
-## **CRITICAL ANIMATION CASES & ARCHITECTURE** 
+### **CRITICAL ANIMATION CASES & ARCHITECTURE** 
 
-## **1. Character vs. NPC Authority** 
+### **1. Character vs. NPC Authority** 
 
 **Player:** Run locally. Replicates automatically. 
 
 **NPC:** Run on the server to ensure all clients see it equally. 
 
-## **2. Camera Cutscenes (Tweening & Network Safety)** 
+### **2. Camera Cutscenes (Tweening & Network Safety)** 
 
 When overriding the camera for a cutscene, transition the `CameraType` to 
 
@@ -454,7 +440,7 @@ camera.CameraType = Enum.CameraType.Custom
 if humanoid then camera.CameraSubject = humanoid end
 ```
 
-## **3. Tools & Weapons (State Machines)** 
+### **3. Tools & Weapons (State Machines)** 
 
 Handling weapon states (Idle, Reload, Shoot) requires dynamic weld manipulation and input listening. 
 
@@ -484,7 +470,7 @@ if processed or not character:FindFirstChild("gun") then return
 end
 ```
 
-## **4. Multi-Character Scenes (Grapples & Takedowns)** 
+### **4. Multi-Character Scenes (Grapples & Takedowns)** 
 
 When 2-3 characters (e.g., attacker and victim) interact physically, playing separate animations rarely syncs up perfectly due to replication delay. 
 
@@ -492,15 +478,15 @@ When 2-3 characters (e.g., attacker and victim) interact physically, playing sep
 
 - synchronized animation track will govern both models flawlessly. 
 
-## **5. Procedural Animation & IK Control (Advanced)** 
+### **5. Procedural Animation & IK Control (Advanced)** 
 
 Beyond static tracks, `IKControl` instances allow for procedural adjustments (e.g., forcing a character's head to look at a part, or feet to align with uneven terrain dynamically) using real-time math. 
 
-## **Common Mistakes Quick-Check** 
+### **Common Mistakes Quick-Check** 
 
 **Playing local animations from a Server Script:** Will not replicate back to the local client smoothly. 
 
-## **Loading Animation Track on Humanoid:** Deprecated. Always 
+### **Loading Animation Track on Humanoid:** Deprecated. Always 
 
 load on the `Animator` . 
 
@@ -524,7 +510,7 @@ load on the `Animator` .
 
 
 
-## **Common Mistake and Tips** 
+### **Common Mistake and Tips** 
 
 **Object Pooling:** Before Reusing items make sure reset the stats and disconnect all the Threads or Events (ex Runservice connect to gui of object) and use Object Pooling when Frequent spawn/destroy object needed 
 
