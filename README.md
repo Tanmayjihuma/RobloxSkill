@@ -45,8 +45,7 @@ This skill includes a comprehensive collection of production-ready resources:
 - **Best Practices** : Prefer explicit annotations on public APIs, use generics where appropriate, and lean on improved autocomplete for faster iteration 
 
 ```
---
- New Type Solver infers types more accurately
+-- New Type Solver infers types more accurately
 local functionprocessPlayer(player: Player)
     local name: string = player.Name  -- inferred correctly
     local team = player.Team  -- Team? properly inferred
@@ -69,11 +68,7 @@ When retrieving data via `leaderstats` or `GetAttribute` , **never fall back to 
 
 _Incorrect:_ `local coins = player:GetAttribute("Coins") or 0` 
 
-_Correct:_ `local coins = player:GetAttribute("Coins") if not` 
-
-```
-coins then return end
-```
+_Correct:_ `local coins = player:GetAttribute("Coins") if not coins then return end` 
 
 - **Prevent** **`WaitForChild` Abuse:** Understand the difference between server and client loading: 
 
@@ -150,12 +145,10 @@ We use `StatesService` to manage these strings safely.
 ```
 local StatesService =
 require(game.ServerScriptService.Services.StatesService)
---
- Adding items
+--Adding items
 StatesService.AddItem(player,"Inventory","Wood",true)--Wood(1)
 StatesService.AddItem(player,"Inventory","Wood",true)--Wood(2)
---
- Checking ownership
+--Checking ownership
 if StatesService.HasItem(player,"Inventory","Wood") then
 ```
 
@@ -384,13 +377,8 @@ _AI Pitfall: Always use_ _`Animator:LoadAnimation()` . Calling this_
 _on the Humanoid is deprecated._ 
 
 Lua 
-
 ```
-local animator =
-```
-
-```
-character:WaitForChild("Humanoid"):WaitForChild("Animator")
+local animator = character:WaitForChild("Humanoid"):WaitForChild("Animator")
 local track = animator:LoadAnimation(animationInstance)
 ```
 
@@ -402,10 +390,9 @@ track:Stop(0.1)-- fadeOutTime
 **Priority:** `Core < Idle < Movement < Action1-4` . Higher priority overwrites lower on shared joints. **Events:** * `track.Stopped:Once(fn)` (Cleanup). 
 
 ```
-track:GetMarkerReachedSignal("MarkerName"):Connect(f
+track:GetMarkerReachedSignal("MarkerName"):Connect(function())
 ```
-
-`n)` (Perfect for syncing sounds/VFX). 
+(Perfect for syncing sounds/VFX). 
 
 ## **Upper-Body Animations (not part of scripting)** 
 
@@ -457,8 +444,7 @@ Handling weapon states (Idle, Reload, Shoot) requires dynamic weld manipulation 
 Lua 
 
 ```
---
- Optimized Tool Logic Skeleton
+-- Optimized Tool Logic Skeleton
 tool.Equipped:Connect(function()
     local defaultWeld =
 character:FindFirstChild("RightHand"):FindFirstChild("RightGrip")
@@ -521,9 +507,7 @@ load on the `Animator` .
 
 **Object Pooling:** Before Reusing items make sure reset the stats and disconnect all the Threads or Events (ex Runservice connect to gui of object) and use Object Pooling when Frequent spawn/destroy object needed 
 
-- `workspace:FindFirstChild` every frame in RunService when not 
-
-- needed 
+- `workspace:FindFirstChild` every frame in RunService when not needed 
 
 - Particle Emitters enabled off-screen 
 
