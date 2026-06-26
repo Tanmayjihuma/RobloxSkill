@@ -14,7 +14,7 @@ This Contains all created script modules , Common problem and error made during 
 
 This skill includes a comprehensive collection of production-ready resources: 
 
-- 📜 [**Helper Scripts**](https://github.com/Tanmayjihuma/RobloxSkill/tree/main/scripts) - Professional utility modules for data  management, Stats management , UI , game flow , Number utils and Audio with File Structure. 
+- 📜 [*Helper Scripts*](https://github.com/Tanmayjihuma/RobloxSkill/tree/main/scripts) - Professional utility modules for data  management, Stats management , UI , game flow , Number utils and Audio with File Structure. 
 
 - 📚 **Development Resources** - Contains Some Game templates , Asset libraries, debugging guides, performance optimization tools, and quick reference materials. 
 
