@@ -85,9 +85,9 @@ _**Note** :_ Avoid using `WaitForChild` with a timeout parameter in most cases. 
 **Do Not Abuse** **`RunService` :** Only use `RunService` when Needed. 
 
 Misusing it or forgetting to disconnect events can cause severe memory leaks and performance drops. 
-
+---
 ## **DEVELOPMENT WORKFLOW** 
-
+---
 1. **Architecture:** 
 
 ```
@@ -95,27 +95,50 @@ Root/
 ├──WorkSpace/
 ├── ReplicatedStorage/
 │   ├── Config/
-│   │   ├── DefaultData.lua          -- Default player stats &
-configs
+│   │   ├── DefaultData.lua          -- Default player stats & configs
 │   │   ├── Gamepasses.lua
-│   │   └── DeveloperProducts.lua
+│   │   └── DeveloperProducts.lua          
 │   ├── Assets/
-│   │   ├── Remotes/-- All RemoteEvents & Functions
-│   │   ├── Models/-- Shared 3D models
-│   │   └── VFX_SFX/-- Visual/Sound effects(Shared)
+│   │   ├── Remotes/                 -- All RemoteEvents & Functions
+│   │   ├── Models/                  -- Shared 3D models
+│   │   └── VFX_SFX/                 -- Visual/Sound effects (Shared)
 │   ├── SharedScripts/
-│   │   └── NumberUtils.lua          --EX: Utilities used by both
-Server/Client
-```
-
-```
-│   └── Classes/--OOPclassdefinitions(if
-needed)
+│   │   └── NumberUtils.lua          -- EX: Utilities used by both Server/Client
+│   └── Classes/                     -- OOP class definitions (if needed)
 │
+├── ServerScriptService/
+│   ├── ServerInit.lua               -- Master server entry point
+│   ├── Services/                    -- Modular server-side logic
+│   │   ├── DataManager/             -- DATASERVICE.LUA, AUTODATASAVINGSERVICE.LUA, ORDINARY DATA SAVING SERVICE
+│   │   │   ├── DataService.lua
+│   │   │   ├── AutoDataSavingService.lua
+│   │   │   └── OrdinaryDataService.lua
+│   │   ├── MonetizationService.lua
+│   │   └── StatesService.lua        -- Player stats & multipliers
+│   └── Systems/                     -- server side gameplay systems
+│       └── RespawnHandler.lua       -- RESPAWN HANDLER
+│
+├── ServerStorage/
+│   ├── Models/                      -- Server-only assets
+│   ├── Musics/                      -- Audio assets
+│   └── TRASH/                       -- Archive of legacy systems (TO STORE OLD SYSTEMS THAT WAS NOT USEFULL)
+│
+├── StarterGui/
+│		├── ClientMainGui
+│   └──OtherGuis         -- Main UI controller logic
+│ 
+│
+└── StarterPlayer/
+    ├── StarterCharacterScripts/     -- CHARACTER INIT, GUI INIT (Runs every time character spawns)
+    │   ├── CharacterInit.lua
+    │   └── GuiInit.lua
+    ├── StarterPlayerScripts/        -- PLAYER INIT (Runs once when player joins)
+    │   └── PlayerInit.lua           -- Master client entry point
+    ├── LocalServices/                -- Client-side modules (e.g., UI_Management.lua)
+    └── LocalSystems/                 -- Client-side gameplay logic
 ```
-
 **Note:** some of these service and scripts are Shown  in helper Script 
-
+---
 ## 2. **Data and Stats Management** 
 
 Roblox has specific engine limitations (e.g., Attributes cannot store Lua tables, and Global Leaderboards require single numbers via OrderedDataStore). 
@@ -162,16 +185,14 @@ end
 StatesService.RemoveItem(player,"Inventory","Wood",true,false)--
 Wood(1)
 ```
-
+---
 ## **3. Leaderstat Data (Ordered Data)** 
 
 Data that needs to appear on a Global Leaderboard (such as Wins, Kills, or Highest 
 
 Streak) cannot be stored in a normal table. 
 
-Instead, these values are stored separately using `OrdinaryDataService` (a 
-
-wrapper around OrderedDataStore). 
+Instead, these values are stored separately using `OrdinaryDataService` (a wrapper around OrderedDataStore). 
 
 When players join, these values are loaded and assigned directly to the appropriate `ValueBase` objects inside the player's `leaderstats` folder. 
 
@@ -317,7 +338,7 @@ Create RemoteEvents/Functions manually in
 - Handle race conditions where the server fires a remote before the client's 
 
 - `OnClientEvent` is fully loaded. 
-
+---
 ## 4. **UI Management** 
 
 - **How to make Responsive GUI:** ( for command panel script or create direct 
@@ -337,13 +358,13 @@ its is not recommended creating GUI using scripts better give me command pannel 
 Add Proper sound on Hover click , Tweens etc depends on how its look 
 
 Use Assets Resources for sounds in UI and some pre Define function For UI Management written in This (View) 
-
-## **Monotization Management** 
+---
+## 5. **Monotization Management** 
 
 ## **Use Custom Service Monotization Service** (view) 
 
 **Features:** `_Init() , Init(player)` ( **Use them in Server Init** ) **Features:** Checks GamePass ownership asynchronously with network retry safety. If owned, triggers the internal reward granting logic. 
-
+---
 ## 6. **SFX / VFX** 
 
 - **Optimize Instance Management:** Keep performance in mind by reusing 
@@ -351,7 +372,7 @@ Use Assets Resources for sounds in UI and some pre Define function For UI Manage
 existing instances rather than creating a lot of new ones for no reason. **Prevent Lag with Client-Side Control:** Make sure certain tweens and VFX are controlled by a `LocalScript` (client-side) so they don't look laggy. You will need to carefully evaluate which effects should be handled by the client versus the server. 
 
 **Reduce Game Loading Times:** Add sounds to `SoundService` from `ServerStorage` to minimize loading times. Avoid putting  large Sounds Effect and  Music , directly into `ReplicatedStorage` , as this can significantly increase how long the game takes to load. 
-
+---
 ## 7. **Animation Mangement** 
 
 ## **Object References** 
@@ -490,7 +511,7 @@ load on the `Animator` .
 - unkeyed. 
 
 - **Marker Events Not Firing:** Animation wasn't re-published after adding markers in the editor, or the string name is misspelled. **AnimationController Fails:** You forgot to instance an `Animator` inside the `AnimationController` before calling load. 
-
+---
 ## 8. **Optimization and Performance QUICK REFERENCE** 
 
 |**Technique**|**Impact**|**When to Use**|
@@ -510,7 +531,7 @@ load on the `Animator` .
 - `workspace:FindFirstChild` every frame in RunService when not needed 
 
 - Particle Emitters enabled off-screen 
-
+---
 ## 9. **Testing And Debugging** 
 
 if u can test using MCP SERVER THEN DO it Find bugs , error , Memory Leak etc 
