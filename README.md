@@ -445,7 +445,7 @@ if u can test using MCP SERVER THEN DO it Find bugs , error , Memory Leak etc
 ---
 ---
 
-## **Rojo & External Sync
+## Rojo & External Sync
 **Note for AI:** This project uses Rojo to sync the local file system to Roblox Studio. When writing scripts or proposing new systems, you must respect the Rojo workflow.
 
 - **Strict Architecture Mapping:** Whenever you create a new script, you MUST define exactly where it lives in the local file system (e.g., `src/ServerScriptService/Services/NewService.lua`) so it syncs to the exact architecture defined in Section 1.
