@@ -457,7 +457,7 @@ if u can test using MCP SERVER THEN DO it Find bugs , error , Memory Leak etc
   - `StarterCharacterScripts` → `src/StarterPlayer/StarterCharacterScripts`
 - **No Orphaned Code:** Never just output a `.lua` script in a vacuum. Always state its intended filepath so Rojo compiles it into the correct DataModel container. 
 - **Assets & UI:** Assume 3D Models, Audio (`ServerStorage/Musics`), and UI (`StarterGui/ClientMainGui`) are built natively in Studio unless explicitly told otherwise. Do not attempt to serialize complex UI or 3D models into the `default.project.json`.
-
+Also u can use roblox MCP Server if connected
 ---
 
 
