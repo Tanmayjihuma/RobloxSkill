@@ -288,6 +288,7 @@ Create RemoteEvents/Functions manually in `ReplicatedStorage/Assets/Remotes` (Ne
 
 - **How to make Responsive GUI:** ( for command panel script or create direct GUI by MCP server if possible) 
 - Make GUI with offset and at the Parent Frame of all the Frame add a UIAspectRatioConstraint now i use my plugin that convert the Offset Gui to Scale gui (make sure u told me to do that in output) and do not make ai slop ui
+- For inventry whose size is not fix now let say inventry has 4 item in each row (x is fix other case is possible too) so in scroll frame make the canvas size automatic in Y (in this case) now add a uigridlayour in it and give cellpadding and cellsize in scale (in X and Y both) now inside uigridlayout add a UIConstantRatio and Done.
 
 ### **Common mistake to avoid** 
 
