@@ -282,7 +282,7 @@ Create RemoteEvents/Functions manually in `ReplicatedStorage/Assets/Remotes` (Ne
 - Rate limit all remotes. Use a per-player cooldown table at a minimum (so client just not able to spam the 100 of remote per second). 
 - Add server-side calculation cooldowns or timeouts based on specific conditions. 
 - Handle race conditions where the server fires a remote before the client's `OnClientEvent` is fully loaded. 
-
+- in steaming if we delete something using local script and it goes in steaming out region then u come back to that region then its back 
 ---
 ## 4. **UI Management** 
 
