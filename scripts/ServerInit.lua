@@ -38,7 +38,6 @@ local SpawnPart = workspace:WaitForChild("SpawnPart")
 -- local Streak_Global_Leaderstate = workspace:WaitForChild("OtherStuff"):WaitForChild("Streak_Leaderboard")
 
 -- 5. Loaded data checker
-_G.DataLoaded = {}
 InitedPlayer={}
 -- 6. Disabling some features (Data must load before spawn)
 Players.CharacterAutoLoads = false
@@ -104,8 +103,7 @@ local onPlayerAdded = function(player){
 		player:SetAttribute("TimeJoined", DateTime.now().UnixTimestamp)
 
 		-- 10.5 Ensuring data is loaded flag
-		_G.DataLoaded[player.UserId .. "ITEMS_DATA_LOADED"] = true
-		_G.DataLoaded[player.UserId .. "LEADERSTATS_LOADED"] = true
+		Player:SetAttribute("ALLDATALOADED" , true)
 
 		-- 11. Initializing monetization, respawn, and other services
 		MonetizationService.Init(player)
