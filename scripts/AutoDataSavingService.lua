@@ -15,13 +15,11 @@ local DATA_TYPE_EXAMPLE_LEADERSTATE_2 = "LEADERSTATS_EXAMPLE_2"
 
 AutoDataSavingService.SaveLeaderstatsData = function(player)
 	
-	if _G.DataLoaded[player.UserId.."LEADERSTATS_LOADED"] then
+	if Player:GetAttribute("ALLDATALOADED") then
 		local EXAMPLE_DATA_1 = player.leaderstats.EXAMPLE_DATA_1.Value
 		local EXAMPLE_DATA_2 = player.leaderstats.EXAMPLE_DATA_2.Value
 		OrdinaryDataService.savePlayerData(DATA_TYPE_EXAMPLE_LEADERSTATE_1 , 6, false , true , player , EXAMPLE_DATA_1)
 		OrdinaryDataService.savePlayerData(DATA_TYPE_EXAMPLE_LEADERSTATE_2 , 6, false , true , player , EXAMPLE_DATA_2)
-		
-		_G.DataLoaded[player.UserId.."LEADERSTATS_LOADED"] = nil
 	end
 end 
 
@@ -40,7 +38,7 @@ end
 
 -- FOR ITEMS OR OTHER DATA (WHEN DATA need contains table we save it like "t1,t2,t2" in attribute)
 AutoDataSavingService.SaveItemsData = function(player)
-	if _G.DataLoaded[player.UserId.."ITEMS_DATA_LOADED"] then
+	if Player:GetAttribute("ALLDATALOADED") then
 		local dataToSave = {
 			ITEM_1 = player:GetAttribute("ITEM_1") ,
 			ITEM_2 = player:GetAttribute("ITEM_2") ,
