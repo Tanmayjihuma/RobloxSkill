@@ -39,7 +39,7 @@ local SpawnPart = workspace:WaitForChild("SpawnPart")
 
 -- 5. Loaded data checker
 _G.DataLoaded = {}
-
+InitedPlayer={}
 -- 6. Disabling some features (Data must load before spawn)
 Players.CharacterAutoLoads = false
 
@@ -81,8 +81,11 @@ end)
 -- ==========================================
 -- 9. On Player Added
 -- ==========================================
-Players.PlayerAdded:Connect(function(player)
-	-- 10. Player init (Loading data , setting item data , assigning base and leaderstate if any)
+
+local onPlayerAdded = function(player){
+	if  InitedPlayer{player} then return end
+	InitedPlayer{player}  = true
+		-- 10. Player init (Loading data , setting item data , assigning base and leaderstate if any)
 	local AttributeData =
 		DataService.loadPlayerData("PlayerAttributeData", 5, true, player, DefaultData.Attributes, true)
 	local ItemsData =
@@ -123,8 +126,16 @@ Players.PlayerAdded:Connect(function(player)
 	else
 		-- Data failed to load entirely, player should probably be kicked to prevent data loss.
 		player:Kick("Failed to load data. Please rejoin.")
-	end
+	end	
+}
+
+-- sometimes played joined before player joined the game
+Players.PlayerAdded:Connect(function(player)
+	onPlayerAdded(player)
 end)
+for i , v in Players:GetChildren(){
+		onPlayerAdded(player)
+}
 
 -- ==========================================
 -- SAVE DATA HELPER FUNCTION
