@@ -137,7 +137,7 @@ We load a table of standard stats (like levels, experience, or standard flags) a
 Because Roblox Attributes cannot store tables, we store player inventories and owned items as comma-separated strings. 
 
 We support Stackable Items using the `ItemName(Count)` format: 
-
+(use same clock for server and client for using workspace:GetServerTimeNow())
 Example: 
 
 ```text
