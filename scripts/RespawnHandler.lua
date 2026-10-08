@@ -1,16 +1,15 @@
--- this is kinda example can need modifications 
 local RespawnHandler = {}
 local Players = game:GetService("Players")
 local RESPAWN_DELAY = 1.25
 local NumberUtils = require(game.ReplicatedStorage.SharedScripts.NumberUtils)
+local MonetizationConfig = require(game.ReplicatedStorage.Config.MonetizationData)
 
+local RetryAttempt = 10
 
--- createOverheadUI(EXAMPLE) only if needed  ask 
+-- createOverheadUI
 local function createOverheadUI(player, character)
 	local head = character:WaitForChild("Head")
-	-- local Leaderstats = player:WaitForChild("leaderstats")
-	-- if Leaderstats then
-	-- end
+
 	-- 1. Create the Main Billboard
 	local billboard = Instance.new("BillboardGui")
 	billboard.Name = "OverheadGUI"
@@ -33,6 +32,7 @@ local function createOverheadUI(player, character)
 	listLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 	listLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
 	listLayout.Padding = UDim.new(0, 5) 
+
 	-- ==========================================
 	-- PLAYER NAME SETUP (Bottom)
 	-- ==========================================
@@ -40,8 +40,6 @@ local function createOverheadUI(player, character)
 	nameLabel.Name = "PlayerName"
 	nameLabel.Size = UDim2.new(1, 0, 0.4, 0)
 	nameLabel.BackgroundTransparency = 1
-	nameLabel.Text = player.Name
-	nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- Pure White
 	nameLabel.Font = Enum.Font.FredokaOne -- Matches the rounded look in your image
 	nameLabel.TextScaled = true
 	nameLabel.LayoutOrder = 2
@@ -53,46 +51,104 @@ local function createOverheadUI(player, character)
 	nameStroke.Thickness = 4.5
 	nameStroke.Parent = nameLabel
 
-	
 	billboard.Parent = head
-end
 
-RespawnHandler.SpawnPlayer = function(player, SpawnLocation)
-	local success, err = pcall(function() 
-		player:LoadCharacterAsync() 
+	-- ==========================================
+	-- [NEW]: DYNAMIC VIP TAG UPDATER
+	-- ==========================================
+	local function updateVIPTag()
+		if player:GetAttribute("Pass_VIP") then
+			nameLabel.Text = MonetizationConfig.VIPConfig.Tag .. " " .. player.Name
+			nameLabel.TextColor3 = MonetizationConfig.VIPConfig.TagColor -- Makes it Gold!
+		else
+			nameLabel.Text = player.Name
+			nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- Pure White
+		end
+	end
+
+	-- 1. Check immediately when the UI is built
+	updateVIPTag()
+
+	-- 2. Listen for changes (Handles slow data loading AND in-game purchases!)
+	local connection
+	connection = player:GetAttributeChangedSignal("Pass_VIP"):Connect(function()
+		---- Prevent memory leaks if the character died and the UI was destroyed
+		--if not nameLabel or not nameLabel.Parent then 
+		--	connection:Disconnect()
+		--	return
+		--end
+		updateVIPTag()
 	end)
-
-	if not success then 
-		warn("⚠️ LoadCharacter Failed for " .. player.Name .. ": " .. tostring(err)) 
-		return 
-	end
-
-	local character = player.Character or player.CharacterAdded:Wait()
-	local root = character:WaitForChild("HumanoidRootPart")
-
-	if root and SpawnLocation then
-		-- ADD SOME SPECIAL FUNCTIONS FOR EXAMPLE :-
-		--createOverheadUI(player, character) 
-		root.Anchored = true 
-		root.CFrame = SpawnLocation.CFrame + Vector3.new(0, 5, 0)
-		task.wait(0.2)
-		root.Anchored = false
-
-	else
-		warn("⚠️ Assigned spawn for " .. player.Name .. " is missing a 'SpawnPoint' part!")
-
-	end
+	nameLabel.Destroying:Connect(function()
+		connection:Disconnect()
+	end)
+	
 end
 
-RespawnHandler.Init = function(player, SpawnLocation)
+RespawnHandler.SpawnPlayer = function(player , SpawnLocation)
+	
+	local Zone = player:GetAttribute("Zone")
+	local SpawnLocation 
+
+
+	if not SpawnLocation then
+		warn("⚠️ Critical Error: Default spawn is missing!")
+		return
+	end
+	
+	local spawnX = SpawnLocation.Position.X + (math.random() - 0.5) * SpawnLocation.Size.X
+	local spawnY = SpawnLocation.Position.Y + (math.random() - 0.5) * SpawnLocation.Size.Y
+	local spawnZ = SpawnLocation.Position.Z + (math.random() - 0.5) * SpawnLocation.Size.Z
+	local spawnPoint = Vector3.new(spawnX, spawnY, spawnZ) + Vector3.new(0, 5, 0)
+	local targetCFrame = CFrame.lookAt(spawnPoint, spawnPoint + SpawnLocation.CFrame.LookVector)
+	local Success = true
+	for i = 1 , RetryAttempt do 
+		if not Success  then
+			task.wait(1)
+		end
+		local streamSuccess, streamErr = pcall(function()
+			player:RequestStreamAroundAsync(spawnPoint)
+		end)
+		if not streamSuccess then
+			warn("[Respawn] Stream failed for " .. player.Name .. ": " .. tostring(streamErr))
+			Success = false
+			continue
+		end
+
+		local loadSuccess, loadErr = pcall(function() 
+			player:LoadCharacterAsync() 
+		end)
+		if not loadSuccess then 
+			warn("[Respawn] Loading failed for " .. player.Name .. ": " .. tostring(loadErr))
+			Success = false
+			continue
+		end
+
+		Success = true
+		break
+	end 
+
+	if not Success then 
+		player:Kick("Try Joining Again Failed to Load Data")
+		return
+	end
+	local character = player.Character or player.CharacterAdded:Wait()
+
+	character:PivotTo(targetCFrame)
+	
+end
+
+RespawnHandler.Init = function(player)
 
 	player.CharacterAdded:Connect(function(character)
+		
+		createOverheadUI(player, character)
+		
+		
 		local humanoid = character:WaitForChild("Humanoid")
-		local root = character:WaitForChild("HumanoidRootPart")
-
+				
 		local isDead = false 
-
-		if humanoid and root then
+		if humanoid then
 			humanoid.BreakJointsOnDeath = false
 
 			humanoid.Died:Connect(function()
@@ -102,13 +158,12 @@ RespawnHandler.Init = function(player, SpawnLocation)
 				print("💀 " .. player.Name .. " Died.")
 				task.wait(RESPAWN_DELAY)
 				if player.Parent then
-					RespawnHandler.SpawnPlayer(player, SpawnLocation)
+					RespawnHandler.SpawnPlayer(player)
 				end
 			end)
 		end
 	end)
-	
-	
 end
 
 return RespawnHandler
+
