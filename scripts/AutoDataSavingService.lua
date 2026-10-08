@@ -21,6 +21,7 @@ AutoDataSavingService.SaveLeaderstatsData = function(player)
 		OrdinaryDataService.savePlayerData(DATA_TYPE_EXAMPLE_LEADERSTATE_1 , 6, false , true , player , EXAMPLE_DATA_1)
 		OrdinaryDataService.savePlayerData(DATA_TYPE_EXAMPLE_LEADERSTATE_2 , 6, false , true , player , EXAMPLE_DATA_2)
 	end
+	-- return them too
 end 
 
 AutoDataSavingService.SaveAttributesData= function(player)
@@ -33,7 +34,8 @@ AutoDataSavingService.SaveAttributesData= function(player)
 		end
 	end
 
-	DataService.savePlayerData("PlayerAttributeData", 4, false, true, player, dataToSave)
+	local s1 = DataService.savePlayerData("PlayerAttributeData", 4, false, true, player, dataToSave)
+	return s1
 end
 
 -- FOR ITEMS OR OTHER DATA (WHEN DATA need contains table we save it like "t1,t2,t2" in attribute)
@@ -43,8 +45,10 @@ AutoDataSavingService.SaveItemsData = function(player)
 			ITEM_1 = player:GetAttribute("ITEM_1") ,
 			ITEM_2 = player:GetAttribute("ITEM_2") ,
 		}
-		DataService.savePlayerData("PlayeritemsData", 5, false, true, player, dataToSave)
+		local s1 = DataService.savePlayerData("PlayeritemsData", 5, false, true, player, dataToSave)
+		return s1
 	end
+	return true
 end
 
 return AutoDataSavingService
