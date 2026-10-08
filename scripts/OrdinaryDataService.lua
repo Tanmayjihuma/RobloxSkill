@@ -1,7 +1,9 @@
 local OrdinaryDataService = {}
 local Players = game:GetService("Players")
 local DataStoreService = game:GetService("DataStoreService")
-local RETRY_DELAY = 2
+local NumberUtils =require(game:GetService("ReplicatedStorage"):WaitForChild("SharedScripts"):WaitForChild("NumberUtils"))
+local RETRY_DELAY_Load = 2.5
+local RETRY_DELAY_Save = 3
 local usernameCache = {}
 
 local function warnPlayer(player, err)
@@ -23,7 +25,7 @@ function OrdinaryDataService.loadPlayerData(DataType, attempts, kickOnFail, play
 			break
 		else
 			warn("⚠️ [GlobalDataModule] Load attempt " .. i .. " failed for " .. player.Name)
-			task.wait(math.clamp(RETRY_DELAY^(i-1), 1, 30))
+			task.wait(RETRY_DELAY_Load)
 		end
 	end
 
@@ -36,7 +38,7 @@ function OrdinaryDataService.loadPlayerData(DataType, attempts, kickOnFail, play
 	if data == nil then
 		data = defaultValue or 0
 	end
-	
+
 	if attributeNameToSet then
 		player:SetAttribute(attributeNameToSet, data)
 	end
@@ -62,7 +64,7 @@ function OrdinaryDataService.savePlayerData(DataType, attempts, kickOnFail, warn
 
 		if success then break end
 		warn("⚠️ [GlobalDataModule] Save attempt " .. i .. " failed for " .. player.Name)
-		task.wait(RETRY_DELAY)
+		task.wait(RETRY_DELAY_Save)
 	end
 
 	if success then
@@ -77,15 +79,14 @@ end
 
 function OrdinaryDataService.startGlobalLeaderboard(DataType, baseDelay, maxAttempts, leaderstatModel, updateTime, retryTime, titleText)
 	local store = DataStoreService:GetOrderedDataStore(DataType)
-	
-	local leaderboardPart = leaderstatModel:WaitForChild("LeaderboardPart")
-	local container = leaderboardPart:WaitForChild("SurfaceGui"):WaitForChild("ScrollingFrame"):WaitForChild("Container")
+
+	local leaderboardPart = leaderstatModel:WaitForChild("Main")
+	local container = leaderboardPart:WaitForChild("SurfaceGui"):WaitForChild("Frame"):WaitForChild("Frame")
 	local template = container:WaitForChild("Template")
 	template.Visible = false 
 
-	local titlePart = leaderstatModel:WaitForChild("Title")
-	local titleLabel = titlePart:WaitForChild("SurfaceGui"):WaitForChild("Title")
-	titleLabel.Text = titleText -- Set the custom title (e.g., "Top Wins" or "Top Streaks")
+	local titleLabel = leaderboardPart:WaitForChild("SurfaceGui"):WaitForChild("Frame"):WaitForChild("Display")
+	if titleText then titleLabel.Text = titleText end 
 
 	task.spawn(function()
 		while true do
@@ -135,7 +136,7 @@ function OrdinaryDataService.startGlobalLeaderboard(DataType, baseDelay, maxAtte
 					local clone = template:Clone()
 					clone.Name = "Rank_" .. rank
 					clone.NameLabel.Text = username
-					clone.NumberLabel.Text = tostring(statValue)
+					clone.NumberLabel.Text = tostring(NumberUtils.Abbreviate(statValue))
 					clone.RankLabel.Text = "#" .. tostring(rank)
 					clone.Visible = true
 					clone.Parent = container
@@ -151,3 +152,4 @@ function OrdinaryDataService.startGlobalLeaderboard(DataType, baseDelay, maxAtte
 end
 
 return OrdinaryDataService
+
