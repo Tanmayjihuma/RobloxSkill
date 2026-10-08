@@ -1,548 +1,348 @@
--- this is an example script contains some methords and u can use them to different scripts 
-
-local SoundService = game:GetService("SoundService")
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-
-local SoundManager = {}
-SoundManager.__index = SoundManager
-
--- Sound categories for organization and volume control
-local SOUND_CATEGORIES = {
-    MUSIC = "Music",
-    SFX = "SFX", 
-    UI = "UI",
-    AMBIENT = "Ambient",
-    VOICE = "Voice"
-}
-
--- Audio pools for efficient sound management
-local soundPools = {}
-local activeSounds = {}
-local musicQueue = {}
-local currentMusic = nil
-
--- Volume settings (0-1)
-local volumeSettings = {
-    [SOUND_CATEGORIES.MUSIC] = 0.7,
-    [SOUND_CATEGORIES.SFX] = 1.0,
-    [SOUND_CATEGORIES.UI] = 0.8,
-    [SOUND_CATEGORIES.AMBIENT] = 0.5,
-    [SOUND_CATEGORIES.VOICE] = 1.0,
-    master = 1.0
-}
-
--- Sound library for easy reference
-local soundLibrary = {
-    music = {},
-    sfx = {},
-    ui = {},
-    ambient = {},
-    voice = {}
-}
-
-function SoundManager:Initialize()
-    print("Initializing SoundManager...")
-    
-    -- Create sound groups for better organization
-    self:CreateSoundGroups()
-    
-    -- Initialize sound pools
-    for category, _ in pairs(SOUND_CATEGORIES) do
-        soundPools[category] = {}
-        activeSounds[category] = {}
-    end
-    
-    -- Load default sounds if they exist
-    self:LoadDefaultSounds()
-    
-    print("SoundManager initialized")
-end
-
-function SoundManager:CreateSoundGroups()
-    for _, category in pairs(SOUND_CATEGORIES) do
-        local soundGroup = Instance.new("SoundGroup")
-        soundGroup.Name = category
-        soundGroup.Volume = volumeSettings[category] * volumeSettings.master
-        soundGroup.Parent = SoundService
-    end
-end
-
-function SoundManager:LoadSound(soundId, category, config)
-    config = config or {}
-    category = category or SOUND_CATEGORIES.SFX
-    
-    local sound = Instance.new("Sound")
-    sound.SoundId = "rbxassetid://" .. tostring(soundId)
-    sound.Volume = config.volume or 1
-    sound.Pitch = config.pitch or 1
-    sound.EmitterSize = config.emitterSize or 10
-    sound.RollOffMode = config.rollOffMode or Enum.RollOffMode.Inverse
-    sound.Name = config.name or ("Sound_" .. soundId)
-    
-    -- Assign to sound group
-    local soundGroup = SoundService:FindFirstChild(category)
-    if soundGroup then
-        sound.SoundGroup = soundGroup
-    end
-    
-    -- Store in library if name is provided
-    if config.name then
-        local categoryKey = string.lower(category)
-        if not soundLibrary[categoryKey] then
-            soundLibrary[categoryKey] = {}
-        end
-        soundLibrary[categoryKey][config.name] = sound
-    end
-    
-    return sound
-end
-
-function SoundManager:PlaySound(soundId, config)
-    config = config or {}
-    local category = config.category or SOUND_CATEGORIES.SFX
-    
-    local sound = self:GetPooledSound(soundId, category, config)
-    if not sound then return nil end
-    
-    -- Apply config
-    sound.Volume = (config.volume or 1) * self:GetCategoryVolume(category)
-    sound.Pitch = config.pitch or 1
-    sound.TimePosition = config.timePosition or 0
-    
-    -- Set 3D position if provided
-    if config.position and config.parent then
-        sound.Parent = config.parent
-    else
-        sound.Parent = SoundService
-    end
-    
-    -- Play with fade in if specified
-    if config.fadeIn then
-        sound.Volume = 0
-        sound:Play()
-        self:FadeSound(sound, (config.volume or 1) * self:GetCategoryVolume(category), config.fadeIn)
-    else
-        sound:Play()
-    end
-    
-    -- Store as active
-    table.insert(activeSounds[category], sound)
-    
-    -- Auto-cleanup when finished
-    local connection
-    connection = sound.Ended:Connect(function()
-        self:ReturnSoundToPool(sound, category)
-        connection:Disconnect()
-    end)
-    
-    -- Auto-stop after duration if specified
-    if config.duration then
-        task.spawn(function()
-            wait(config.duration)
-            if sound.IsPlaying then
-                if config.fadeOut then
-                    self:FadeSound(sound, 0, config.fadeOut, function()
-                        sound:Stop()
-                    end)
-                else
-                    sound:Stop()
-                end
-            end
-        end)
-    end
-    
-    return sound
-end
-
-function SoundManager:GetPooledSound(soundId, category, config)
-    local pool = soundPools[category]
-    local soundKey = tostring(soundId)
-    
-    -- Try to get from pool
-    if pool[soundKey] and #pool[soundKey] > 0 then
-        return table.remove(pool[soundKey])
-    end
-    
-    -- Create new sound
-    return self:LoadSound(soundId, category, config)
-end
-
-function SoundManager:ReturnSoundToPool(sound, category)
-    local pool = soundPools[category]
-    local soundKey = string.match(sound.SoundId, "%d+")
-    
-    if not soundKey then return end
-    
-    -- Remove from active sounds
-    for i, activeSound in ipairs(activeSounds[category]) do
-        if activeSound == sound then
-            table.remove(activeSounds[category], i)
-            break
-        end
-    end
-    
-    -- Reset sound properties
-    sound:Stop()
-    sound.TimePosition = 0
-    sound.Parent = nil
-    
-    -- Add to pool
-    if not pool[soundKey] then
-        pool[soundKey] = {}
-    end
-    
-    -- Limit pool size to prevent memory issues
-    if #pool[soundKey] < 5 then
-        table.insert(pool[soundKey], sound)
-    else
-        sound:Destroy()
-    end
-end
-
-function SoundManager:PlayMusic(soundId, config)
-    config = config or {}
-    
-    -- Stop current music if not crossfading
-    if currentMusic and not config.crossfade then
-        if config.fadeOut then
-            self:FadeSound(currentMusic, 0, config.fadeOut, function()
-                currentMusic:Stop()
-                currentMusic = nil
-            end)
-        else
-            currentMusic:Stop()
-            currentMusic = nil
-        end
-    end
-    
-    -- Create new music
-    local music = self:LoadSound(soundId, SOUND_CATEGORIES.MUSIC, {
-        name = config.name,
-        volume = config.volume or 1
-    })
-    
-    music.Looped = config.looped ~= false
-    music.Parent = SoundService
-    
-    if config.crossfade and currentMusic then
-        -- Crossfade between tracks
-        self:CrossfadeMusic(currentMusic, music, config.crossfade)
-    else
-        -- Normal fade in
-        if config.fadeIn then
-            music.Volume = 0
-            music:Play()
-            self:FadeSound(music, (config.volume or 1) * self:GetCategoryVolume(SOUND_CATEGORIES.MUSIC), config.fadeIn)
-        else
-            music.Volume = (config.volume or 1) * self:GetCategoryVolume(SOUND_CATEGORIES.MUSIC)
-            music:Play()
-        end
-    end
-    
-    currentMusic = music
-    return music
-end
-
-function SoundManager:CrossfadeMusic(oldMusic, newMusic, duration)
-    duration = duration or 2
-    
-    local oldVolume = oldMusic.Volume
-    local newVolume = (newMusic.Volume or 1) * self:GetCategoryVolume(SOUND_CATEGORIES.MUSIC)
-    
-    -- Start new music at 0 volume
-    newMusic.Volume = 0
-    newMusic:Play()
-    
-    -- Fade out old, fade in new
-    self:FadeSound(oldMusic, 0, duration, function()
-        oldMusic:Stop()
-    end)
-    
-    self:FadeSound(newMusic, newVolume, duration)
-end
-
-function SoundManager:StopMusic(fadeOut)
-    if not currentMusic then return end
-    
-    if fadeOut then
-        self:FadeSound(currentMusic, 0, fadeOut, function()
-            currentMusic:Stop()
-            currentMusic = nil
-        end)
-    else
-        currentMusic:Stop()
-        currentMusic = nil
-    end
-end
-
-function SoundManager:FadeSound(sound, targetVolume, duration, callback)
-    if not sound or not sound.Parent then return end
-    
-    local tween = TweenService:Create(
-        sound,
-        TweenInfo.new(duration, Enum.EasingStyle.Linear),
-        {Volume = targetVolume}
-    )
-    
-    if callback then
-        tween.Completed:Connect(callback)
-    end
-    
-    tween:Play()
-    return tween
-end
-
-function SoundManager:SetVolume(category, volume)
-    volume = math.clamp(volume, 0, 1)
-    
-    if category == "master" then
-        volumeSettings.master = volume
-        self:UpdateAllVolumes()
-    else
-        volumeSettings[category] = volume
-        local soundGroup = SoundService:FindFirstChild(category)
-        if soundGroup then
-            soundGroup.Volume = volume * volumeSettings.master
-        end
-    end
-end
-
-function SoundManager:GetVolume(category)
-    return volumeSettings[category] or 0
-end
-
-function SoundManager:GetCategoryVolume(category)
-    return (volumeSettings[category] or 1) * volumeSettings.master
-end
-
-function SoundManager:UpdateAllVolumes()
-    for category, _ in pairs(SOUND_CATEGORIES) do
-        local soundGroup = SoundService:FindFirstChild(category)
-        if soundGroup then
-            soundGroup.Volume = (volumeSettings[category] or 1) * volumeSettings.master
-        end
-    end
-end
-
-function SoundManager:StopAllSounds(category, fadeOut)
-    category = category or nil
-    
-    if category then
-        -- Stop sounds in specific category
-        for _, sound in ipairs(activeSounds[category]) do
-            if fadeOut then
-                self:FadeSound(sound, 0, fadeOut, function()
-                    sound:Stop()
-                end)
-            else
-                sound:Stop()
-            end
-        end
-        activeSounds[category] = {}
-    else
-        -- Stop all sounds
-        for cat, sounds in pairs(activeSounds) do
-            for _, sound in ipairs(sounds) do
-                if fadeOut then
-                    self:FadeSound(sound, 0, fadeOut, function()
-                        sound:Stop()
-                    end)
-                else
-                    sound:Stop()
-                end
-            end
-            activeSounds[cat] = {}
-        end
-        
-        -- Stop current music
-        if currentMusic then
-            if fadeOut then
-                self:FadeSound(currentMusic, 0, fadeOut, function()
-                    currentMusic:Stop()
-                    currentMusic = nil
-                end)
-            else
-                currentMusic:Stop()
-                currentMusic = nil
-            end
-        end
-    end
-end
-
-function SoundManager:GetSoundByName(name, category)
-    if category then
-        local categoryKey = string.lower(category)
-        return soundLibrary[categoryKey] and soundLibrary[categoryKey][name]
-    else
-        -- Search all categories
-        for _, sounds in pairs(soundLibrary) do
-            if sounds[name] then
-                return sounds[name]
-            end
-        end
-    end
-    return nil
-end
-
-function SoundManager:PlayUISound(soundName)
-    local sound = self:GetSoundByName(soundName, "ui")
-    if sound then
-        sound:Play()
-    end
-end
-
-function SoundManager:LoadDefaultSounds()
-    -- Default UI sounds
-    self:LoadSound(131961136, SOUND_CATEGORIES.UI, {name = "click", volume = 0.5})
-    self:LoadSound(131961136, SOUND_CATEGORIES.UI, {name = "hover", volume = 0.3})
-    self:LoadSound(131961136, SOUND_CATEGORIES.UI, {name = "error", volume = 0.7})
-    self:LoadSound(131961136, SOUND_CATEGORIES.UI, {name = "success", volume = 0.6})
-    
-    -- You can add more default sounds here
-end
-
-function SoundManager:CreatePlaylist(songs, config)
-    config = config or {}
-    
-    local playlist = {
-        songs = songs,
-        currentIndex = 1,
-        shuffle = config.shuffle or false,
-        loop = config.loop ~= false,
-        crossfade = config.crossfade or 2
-    }
-    
-    function playlist:play()
-        if #self.songs > 0 then
-            local song = self.songs[self.currentIndex]
-            SoundManager:PlayMusic(song.id, {
-                volume = song.volume,
-                fadeIn = song.fadeIn,
-                name = song.name
-            })
-            
-            -- Set up next song
-            if currentMusic then
-                currentMusic.Ended:Connect(function()
-                    self:next()
-                end)
-            end
-        end
-    end
-    
-    function playlist:next()
-        if self.shuffle then
-            self.currentIndex = math.random(1, #self.songs)
-        else
-            self.currentIndex = self.currentIndex + 1
-            if self.currentIndex > #self.songs then
-                if self.loop then
-                    self.currentIndex = 1
-                else
-                    return
-                end
-            end
-        end
-        self:play()
-    end
-    
-    function playlist:previous()
-        self.currentIndex = self.currentIndex - 1
-        if self.currentIndex < 1 then
-            self.currentIndex = self.loop and #self.songs or 1
-        end
-        self:play()
-    end
-    
-    return playlist
-end
-
--- Spatial audio helpers
-function SoundManager:Play3DSound(soundId, position, config)
-    config = config or {}
-    config.position = position
-    config.parent = workspace
-    
-    local sound = self:PlaySound(soundId, config)
-    if sound then
-        -- Create attachment for 3D positioning
-        local part = Instance.new("Part")
-        part.Name = "SoundPart"
-        part.Anchored = true
-        part.CanCollide = false
-        part.Transparency = 1
-        part.Size = Vector3.new(1, 1, 1)
-        part.Position = position
-        part.Parent = workspace
-        
-        sound.Parent = part
-        
-        -- Clean up part when sound ends
-        sound.Ended:Connect(function()
-            part:Destroy()
-        end)
-    end
-    
-    return sound
-end
-
-return SoundManager
-
-
--- example of music service 
---[[
-
 local MusicService = {}
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Remote = ReplicatedStorage:WaitForChild("Assets"):WaitForChild("Remotes"):WaitForChild("MusicRemote")
 local SoundService = game:GetService("SoundService")
+local ContentProvider = game:GetService("ContentProvider")
 
-local function playNextSong()
-	local ServerStorage = game:GetService("ServerStorage")
-	local MusicFolder = ServerStorage:WaitForChild("GameMusic") 
-	local songs = MusicFolder:GetChildren()
-	if #songs == 0 then return end
+local SONG_GAP = 0.5 -- seconds of silence between songs
 
-	local selectedSong = songs[math.random(1, #songs)]
-	
-	if not selectedSong.IsLoaded then
-		selectedSong.Loaded:Wait()
+
+-- One SoundGroup controls all music volume (the settings UI uses this)
+function MusicService.GetGroup()
+	local group = SoundService:FindFirstChild("LocalMusicGroup")
+	if not group then
+		group = Instance.new("SoundGroup")
+		group.Name = "LocalMusicGroup"
+		group.Parent = SoundService
 	end
-	
-	Remote:FireAllClients(selectedSong.SoundId)
-
-	task.wait(selectedSong.TimeLength + 2)
-	playNextSong()
+	return group
 end
 
+-- SERVER
+
+--function MusicService._Init()
+--	local ServerStorage = game:GetService("ServerStorage")
+--	local songs = ServerStorage:WaitForChild("GameMusic"):GetChildren()
+--	if #songs == 0 then
+--		warn("MusicService: no songs in ServerStorage.GameMusic")
+--		return
+--	end
+
+--	task.spawn(function()
+--		local last
+--		while true do
+--			local song = songs[math.random(1, #songs)]
+--			if #songs > 1 and song == last then
+--				continue
+--			end
+--			last = song
+
+--			ContentProvider:PreloadAsync({ song })
+--			if song.IsLoaded and song.TimeLength > 0 then
+--				ReplicatedStorage:SetAttribute("MusicId", song.SoundId)
+--				ReplicatedStorage:SetAttribute("MusicLength", song.TimeLength)
+--				ReplicatedStorage:SetAttribute("MusicStart", workspace:GetServerTimeNow()) -- set last, it's the trigger
+--				task.wait(song.TimeLength + 2)
+--			else
+--				warn("MusicService: failed to load " .. song.Name .. ", skipping")
+--				task.wait(1)
+--			end
+--		end
+--	end)
+--end
 function MusicService._Init()
-	task.spawn(playNextSong)
+	local ServerStorage = game:GetService("ServerStorage")
+	local songs = ServerStorage:WaitForChild("GameMusic"):GetChildren()
+	if #songs == 0 then
+		warn("MusicService: no songs in ServerStorage.GameMusic")
+		return
+	end
+
+	local function pickSong(last)
+		if #songs == 1 then return songs[1] end
+		local song
+		repeat
+			song = songs[math.random(1, #songs)]
+		until song ~= last
+		return song
+	end
+
+	local function load(song)
+		ContentProvider:PreloadAsync({ song })
+		return song.IsLoaded and song.TimeLength > 0
+	end
+
+	task.spawn(function()
+		local current = pickSong(nil)
+
+		while true do
+			if not load(current) then
+				warn("MusicService: failed to load " .. current.Name .. ", skipping")
+				current = pickSong(current)
+				task.wait(1)
+				continue
+			end
+
+			local length = current.TimeLength
+			local startedAt = os.clock()
+
+			ReplicatedStorage:SetAttribute("MusicId", current.SoundId)
+			ReplicatedStorage:SetAttribute("MusicLength", length)
+			ReplicatedStorage:SetAttribute("MusicStart", workspace:GetServerTimeNow()) -- set last, it's the trigger
+
+			-- Pick the NEXT song now and load it while this one plays.
+			local nextSong = pickSong(current)
+			ReplicatedStorage:SetAttribute("MusicNextId", nextSong.SoundId) -- clients preload this
+			load(nextSong)
+
+			-- Wait only for what's left of the current song.
+			local remaining = length - (os.clock() - startedAt)
+			task.wait(math.max(remaining, 0) + SONG_GAP)
+
+			current = nextSong
+		end
+	end)
 end
 
+
+-- CLIENT
 function MusicService._init()
-	local currentSound = nil
+	local group = MusicService.GetGroup()
 
-	Remote.OnClientEvent:Connect(function(soundId)
-		if not currentSound then
-			currentSound = Instance.new("Sound")
-			currentSound.Name = "LocalGameMusic"
-			currentSound.Parent = SoundService
+	local sound = SoundService:FindFirstChild("LocalGameMusic")
+	if not sound then
+		sound = Instance.new("Sound")
+		sound.Name = "LocalGameMusic"
+		sound.Volume = 1
+		sound.SoundGroup = group
+		sound.Parent = SoundService
+	end
+
+	local function preloadNext()
+		local nextId = ReplicatedStorage:GetAttribute("MusicNextId")
+		if not nextId then return end
+
+		local temp = Instance.new("Sound")
+		temp.SoundId = nextId
+		ContentProvider:PreloadAsync({ temp })
+		temp:Destroy()
+	end
+
+
+	local token = 0
+	local function playCurrent()
+		local id = ReplicatedStorage:GetAttribute("MusicId")
+		local start = ReplicatedStorage:GetAttribute("MusicStart")
+		local length = ReplicatedStorage:GetAttribute("MusicLength")
+		if not id or not start then return end
+
+		token += 1
+		local myToken = token
+
+		sound:Stop()
+		sound.SoundId = id
+		sound:Play()
+
+		-- joined mid-song? jump to where everyone else is
+		local elapsed = workspace:GetServerTimeNow() - start
+		if length and elapsed > 2 and elapsed < length then
+			if not sound.IsLoaded then sound.Loaded:Wait() end
+			if myToken == token then
+				sound.TimePosition = elapsed
+			end
 		end
-		
-		currentSound:Stop()
-		currentSound.SoundId = soundId
-		currentSound:Play()
+	end
 
-		print("Now playing: " .. soundId)
+	ReplicatedStorage:GetAttributeChangedSignal("MusicStart"):Connect(playCurrent)
+	ReplicatedStorage:GetAttributeChangedSignal("MusicNextId"):Connect(function()
+		task.spawn(preloadNext)
 	end)
+	
+	task.spawn(preloadNext)
+	task.spawn(playCurrent)
 end
 
 return MusicService
 
-]]
 
+
+--- also the local client for settings (added for example)
+
+--[[
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local SoundService = game:GetService("SoundService")
+
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+local SettingsGui = PlayerGui:WaitForChild("Settings")
+local MainFrame = SettingsGui:WaitForChild("MainFrame")
+local OpenButton = SettingsGui:WaitForChild("OpenButton")
+
+local TitleFrame = MainFrame:WaitForChild("TitleFrame")
+local CloseButton = TitleFrame:WaitForChild("CloseButton")
+
+local MusicFrame = MainFrame:WaitForChild("MusicFrame")
+local MusicBar = MusicFrame:WaitForChild("MusicBar")
+local SlidingButton = MusicBar:WaitForChild("SlidingButton")
+local MuteButton = MusicBar:WaitForChild("MuteButton")
+
+local autoCloseGuis = require(ReplicatedStorage:WaitForChild("Config"):WaitForChild("Settings")).MainFrameGui
+
+local basicSFX = SoundService:WaitForChild("BasicSFX")
+local hoverSound = basicSFX:WaitForChild("UiHover")
+local clickSound = basicSFX:WaitForChild("UiClick")
+local closeClickSound = basicSFX:WaitForChild("UiCloseClick")
+
+local menuSizes = {}
+
+local MusicService = require(ReplicatedStorage:WaitForChild("SharedScripts"):WaitForChild("MusicService"))
+local musicGroup = MusicService.GetGroup()
+
+local currentVolume = musicGroup:GetAttribute("UserVolume") or 1
+local isMuted = musicGroup:GetAttribute("UserMuted") or false
+
+local MenuUtils = require(ReplicatedStorage:WaitForChild("SharedScripts"):WaitForChild("MenuUtils"))
+
+-- As early as possible, right after MainFrame = ...WaitForChild(...):
+-- Exact size of StarterGui.Settings.MainFrame (scale-only, window-independent)
+MenuUtils.CacheSize(MainFrame, UDim2.fromScale(0.259340674, 0.665312767))
+
+
+local function OpenMenu(targetMainFrame)
+	for _, guiName in ipairs(autoCloseGuis) do
+		local gui = PlayerGui:FindFirstChild(guiName)
+		if gui and gui:IsA("ScreenGui") then
+			local frame = gui:FindFirstChild("MainFrame")
+			if frame and frame ~= targetMainFrame then frame.Visible = false end
+		end
+	end
+
+	if not menuSizes[targetMainFrame] then
+		menuSizes[targetMainFrame] = targetMainFrame.Size
+	end
+
+	targetMainFrame.Size = UDim2.new(0, 0, 0, 0)
+	targetMainFrame.Visible = true
+
+	TweenService:Create(targetMainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = menuSizes[targetMainFrame]}):Play()
+end
+
+local function CloseMenu(targetMainFrame)
+	local closeTween = TweenService:Create(targetMainFrame, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)})
+	closeTween:Play()
+	closeTween.Completed:Wait()
+	targetMainFrame.Visible = false
+end
+
+--OpenButton.MouseButton1Click:Connect(function()
+--	--if clickSound then clickSound:Play() end
+--	if MainFrame.Visible then
+--		CloseMenu(MainFrame)
+--	else
+--		OpenMenu(MainFrame)
+--	end
+--end)
+
+--CloseButton.MouseButton1Click:Connect(function()
+--	--if closeClickSound then closeClickSound:Play() end
+--	CloseMenu(MainFrame)
+--end)
+
+OpenButton.MouseButton1Click:Connect(function()
+	if MainFrame.Visible then
+		MenuUtils.Close(MainFrame)
+	else
+		MenuUtils.Open(MainFrame, { playerGui = PlayerGui, autoCloseGuis = autoCloseGuis })
+	end
+end)
+
+CloseButton.MouseButton1Click:Connect(function()
+	MenuUtils.Close(MainFrame)
+end)
+
+local function bindHover(btn)
+	local originalSize = btn.Size
+	btn.MouseEnter:Connect(function()
+		if hoverSound then hoverSound:Play() end
+		TweenService:Create(btn, TweenInfo.new(0.15), {Size = UDim2.new(originalSize.X.Scale * 1.05, originalSize.X.Offset, originalSize.Y.Scale * 1.05, originalSize.Y.Offset)}):Play()
+	end)
+	btn.MouseLeave:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.15), {Size = originalSize}):Play()
+	end)
+end
+--bindHover(OpenButton)
+--bindHover(MuteButton)
+
+
+local isDragging = false
+
+
+
+local function ApplyMusicVolume(vol)
+	musicGroup:SetAttribute("UserVolume", vol)
+	musicGroup:SetAttribute("UserMuted", isMuted)
+	musicGroup.Volume = isMuted and 0 or vol
+end
+
+local function updateSlider(input)
+	local barSize = MusicBar.AbsoluteSize.X
+	local barPos = MusicBar.AbsolutePosition.X
+	local mousePos = input.Position.X
+
+	local percentage = math.clamp((mousePos - barPos) / barSize, 0, 1)
+
+	TweenService:Create(SlidingButton, TweenInfo.new(0.05, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+		Position = UDim2.new(percentage, 0, SlidingButton.Position.Y.Scale, SlidingButton.Position.Y.Offset)
+	}):Play()
+
+	currentVolume = percentage
+
+	if not isMuted then
+		ApplyMusicVolume(currentVolume)
+	end
+end
+
+SlidingButton.MouseButton1Down:Connect(function() isDragging = true end)
+--MusicBar.MouseButton1Down:Connect(function() isDragging = true end)
+
+-- Handle Mouse/Touch movement
+UserInputService.InputChanged:Connect(function(input)
+	if isDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+		updateSlider(input)
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		isDragging = false
+	end
+end)
+
+MuteButton.MouseButton1Click:Connect(function()
+	if clickSound then clickSound:Play() end
+	isMuted = not isMuted
+
+	if isMuted then
+		MuteButton.Text = "UNMUTE"
+		MuteButton.BackgroundColor3 = Color3.fromRGB(120, 120, 120) -- Turn Gray
+		ApplyMusicVolume(0)
+	else
+		MuteButton.Text = "MUTE"
+		MuteButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Turn Red
+		ApplyMusicVolume(currentVolume)
+	end
+end)
+
+MuteButton.Text = isMuted and "UNMUTE" or "MUTE"
+MuteButton.BackgroundColor3 = isMuted and Color3.fromRGB(120,120,120) or Color3.fromRGB(255,0,0)
+ApplyMusicVolume(currentVolume)
+SlidingButton.Position = UDim2.new(currentVolume, 0, SlidingButton.Position.Y.Scale, SlidingButton.Position.Y.Offset)
+
+]]
 
 
 
